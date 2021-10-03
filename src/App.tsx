@@ -1,4 +1,4 @@
-import { CssBaseline, ThemeProvider } from '@material-ui/core'
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import FirstPage from 'pages/FirstPage'
 import React from 'react'
 import { Provider } from 'react-redux'
