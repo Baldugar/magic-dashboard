@@ -14,11 +14,3 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-
-.MuiAutocomplete-popper {
-    left: 15px !important;
-}
-
-/* .TypeSelectorControl-entry:first-child {
-    margin-right: 50px;
-} */
