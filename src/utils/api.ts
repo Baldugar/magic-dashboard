@@ -4,12 +4,12 @@ export enum API_CALL_TYPE {
     CARDS = 'cards/search',
 }
 
-export type API_FUNCTION = { type: API_CALL_TYPE.CARDS; name: string }
+export type API_FUNCTION = { type: API_CALL_TYPE.CARDS; query: string }
 
 export const URLforAPIFunction = (call: API_FUNCTION): string => {
     switch (call.type) {
         case API_CALL_TYPE.CARDS:
-            const url = BASE_URL + `${call.type}?q=${call.name}`
+            const url = BASE_URL + `${call.type}?q=${call.query}`
             return url
         default:
             return BASE_URL + `${call.type}`
