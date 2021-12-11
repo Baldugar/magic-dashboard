@@ -2,9 +2,9 @@ import { format } from 'date-fns'
 import { chunk, cloneDeep, flatten, sortBy } from 'lodash'
 import { DropResult } from 'react-beautiful-dnd'
 import { API_CALL_TYPE, sendAPIRequest } from 'utils/api'
-import { ApiCard, Card, Deck, DeckBoard, ImportedCardInDeck, MODALS, MODAL_ACTION } from 'utils/types'
+import { ApiCard, Card, Deck, DeckBoard, ImportedCard, MODALS, MODAL_ACTION } from 'utils/types'
 
-const cardToCardInDeck = (card: string): ImportedCardInDeck => {
+const cardToCardInDeck = (card: string): ImportedCard => {
     const splittedCard = card.trim().split(' ')
     const numOfCards = Number(splittedCard[0])
     const number = isNaN(Number(splittedCard[splittedCard.length - 1])) ? '0' : splittedCard[splittedCard.length - 1]
@@ -41,7 +41,7 @@ export const submitDeck = async (
         .filter((v) => v.length > 0)
     let companion: string | undefined = undefined
     let commander: string | undefined = undefined
-    const deckToState: Deck = { deck: [] }
+    const deckToState: Deck = { deck: [], name: '' }
     if (submittedCardsArray) {
         // Remove the sideboard
         const sideboardStartingIndex = submittedCardsArray.findIndex((c) => c === 'Sideboard')

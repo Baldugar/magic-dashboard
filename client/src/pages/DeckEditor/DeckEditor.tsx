@@ -12,7 +12,7 @@ import colors from 'utils/colors'
 import { generateExportDeck, generateDeckBoard, onDragEnd, downloadExportedDeck } from 'utils/funcs'
 import { Deck, DeckBoard, MODALS, MODAL_ACTION, SETTINGS } from 'utils/types'
 
-const FirstPage = (): JSX.Element => {
+const DeckEditor = (): JSX.Element => {
     const [importedDeck, setImportedDeck] = useState<Deck>()
     const [draggedCard, setDraggedCard] = useState<string>('')
     const textFieldRef = useRef<HTMLTextAreaElement>()
@@ -238,4 +238,4 @@ const FirstPage = (): JSX.Element => {
     )
 }
 
-export default FirstPage
+export default DeckEditor

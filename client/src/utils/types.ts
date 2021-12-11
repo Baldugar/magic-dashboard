@@ -2,9 +2,6 @@ export interface ImportedCard {
     name: string
     set: string
     number: string
-}
-
-export interface ImportedCardInDeck extends ImportedCard {
     numOfCards: number
 }
 
@@ -19,18 +16,13 @@ export interface ApiCard {
     cmc: number
 }
 
-export interface Card extends ImportedCardInDeck {
-    card_faces?: ApiCard[]
-    image_uris?: {
-        border_crop: string
-        png: string
-        normal: string
-    }
-    cmc: number
+export interface Card extends ImportedCard, ApiCard {
     isCommander?: true
     isCompanion?: true
 }
+
 export interface Deck {
+    name: string
     commander?: Card
     companion?: Card
     deck: Card[]
@@ -65,4 +57,25 @@ export enum SETTINGS {
     DELETE_CARDS_ON_DELETE_COLUMN = 'DELETE_CARDS_ON_DELETE_COLUMN',
     CONFIRM_ON_DELETE_CARD = 'CONFIRM_ON_DELETE_CARD',
     CONFIRM_ON_DELETE_COLUMN = 'CONFIRM_ON_DELETE_COLUMN',
+}
+
+export enum COLORS {
+    WHITE = 'W',
+    BLUE = 'U',
+    GREEN = 'G',
+    RED = 'R',
+    BLACK = 'B',
+    COLORLESS = 'C',
+}
+
+export enum RARITY {
+    COMMON = 'C',
+    UNCOMMON = 'U',
+    RARE = 'R',
+    MYTHIC = 'M',
+}
+
+export interface Wildcard<T extends RARITY> {
+    rarity: T
+    number: number
 }

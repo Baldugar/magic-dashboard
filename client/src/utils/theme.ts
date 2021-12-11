@@ -17,7 +17,7 @@ const theme: Theme = createTheme({
         },
         text: {
             disabled: colors.midGray,
-            primary: colors.white,
+            primary: colors.black,
             secondary: colors.black,
         },
     },
