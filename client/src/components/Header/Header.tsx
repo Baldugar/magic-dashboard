@@ -16,11 +16,11 @@ import React, { KeyboardEvent, SyntheticEvent, useRef, useState } from 'react'
 import colors from 'utils/colors'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { GeneralState } from 'store/GeneralState/GeneralState.reducer'
-import { MODAL_ACTION, MODALS, SETTINGS, DeckBoard } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS, SETTINGS, DeckBoard } from 'utils/types'
 import { Download } from '@mui/icons-material'
 
 export interface HeaderProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     setSettings: (payload: { setting: SETTINGS; value: boolean }) => void
     generalState: GeneralState
     deckBoard: DeckBoard
@@ -54,8 +54,10 @@ const Header = (props: HeaderProps): JSX.Element => {
         }
     }
 
-    const handleOpenImportModal = () => setModalState({ action: MODAL_ACTION.OPEN, target: MODALS.IMPORT_DECK })
-    const handleOpenNewColumnModal = () => setModalState({ action: MODAL_ACTION.OPEN, target: MODALS.NEW_COLUMN })
+    const handleOpenImportModal = () =>
+        setModalState({ action: MODAL_ACTION.OPEN, target: DECK_EDITOR_MODALS.IMPORT_DECK })
+    const handleOpenNewColumnModal = () =>
+        setModalState({ action: MODAL_ACTION.OPEN, target: DECK_EDITOR_MODALS.NEW_COLUMN })
 
     return (
         <Box

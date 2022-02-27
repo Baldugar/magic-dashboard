@@ -2,10 +2,10 @@ import { Backdrop, Button, Fade, Modal, Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
 import colors from 'utils/colors'
-import { MODAL_ACTION, MODALS } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS } from 'utils/types'
 
 export interface DeleteCardConfirmationModalProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     open: boolean
     confirmDeleteCard: () => void
 }
@@ -14,7 +14,7 @@ const DeleteCardConfirmationModal = (props: DeleteCardConfirmationModalProps): J
     const { open, setModalState, confirmDeleteCard } = props
 
     const handleCloseModal = () =>
-        setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.DELETE_CARD_CONFIRMATION })
+        setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.DELETE_CARD_CONFIRMATION })
 
     return (
         <Modal

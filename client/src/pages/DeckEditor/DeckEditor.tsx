@@ -10,7 +10,7 @@ import { GeneralState } from 'store/GeneralState/GeneralState.reducer'
 import { AppState } from 'store/store'
 import colors from 'utils/colors'
 import { generateExportDeck, generateDeckBoard, onDragEnd, downloadExportedDeck } from 'utils/funcs'
-import { Deck, DeckBoard, MODALS, MODAL_ACTION, SETTINGS } from 'utils/types'
+import { Deck, DeckBoard, DECK_EDITOR_MODALS, MODAL_ACTION, SETTINGS } from 'utils/types'
 
 const DeckEditor = (): JSX.Element => {
     const [importedDeck, setImportedDeck] = useState<Deck>()
@@ -27,7 +27,7 @@ const DeckEditor = (): JSX.Element => {
     const dispatch = useDispatch<Dispatch<GeneralStateActions>>()
 
     const setModalState = useCallback(
-        (payload: { action: MODAL_ACTION; target: MODALS }) => {
+        (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS }) => {
             dispatch({ type: GeneralStateAction.SET_MODAL_STATE, payload })
         },
         [dispatch],
@@ -78,7 +78,7 @@ const DeckEditor = (): JSX.Element => {
     useEffect(() => {
         if (importedDeck !== undefined) {
             setDeckBoard(generateDeckBoard(importedDeck))
-            setModalState({ target: MODALS.IMPORT_DECK, action: MODAL_ACTION.CLOSE })
+            setModalState({ target: DECK_EDITOR_MODALS.IMPORT_DECK, action: MODAL_ACTION.CLOSE })
         }
     }, [importedDeck])
 
@@ -171,7 +171,7 @@ const DeckEditor = (): JSX.Element => {
                                         })
                                         setModalState({
                                             action: MODAL_ACTION.OPEN,
-                                            target: MODALS.DELETE_COLUMN_CONFIRMATION,
+                                            target: DECK_EDITOR_MODALS.DELETE_COLUMN_CONFIRMATION,
                                         })
                                     } else {
                                         deleteColumn(index)

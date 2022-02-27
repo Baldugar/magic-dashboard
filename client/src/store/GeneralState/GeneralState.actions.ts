@@ -1,5 +1,5 @@
 import { GeneralState } from 'store/GeneralState/GeneralState.reducer'
-import { MODAL_ACTION, MODALS, DeckBoard, SETTINGS } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS, DeckBoard, SETTINGS } from 'utils/types'
 
 export enum GeneralStateAction {
     DEFAULT = 'DEFAULT', // This is only for testing purposes
@@ -11,6 +11,7 @@ export enum GeneralStateAction {
     REMOVE_CARD = 'REMOVE_CARD',
     EDIT_COLUMN = 'EDIT_COLUMN',
     DELETE_COLUMN = 'DELETE_COLUMN',
+    SET_BOTTOM_BAR_STATE = 'SET_BOTTOM_BAR_STATE',
 }
 
 type GeneralStateActions =
@@ -18,7 +19,7 @@ type GeneralStateActions =
     | { type: GeneralStateAction.SET_GENERAL_STATE; payload: Partial<GeneralState> }
     | {
           type: GeneralStateAction.SET_MODAL_STATE
-          payload: { action: MODAL_ACTION; target: MODALS; message?: string }
+          payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }
       }
     | {
           type: GeneralStateAction.SET_DECK_BOARD
@@ -43,6 +44,10 @@ type GeneralStateActions =
     | {
           type: GeneralStateAction.DELETE_COLUMN
           payload: number
+      }
+    | {
+          type: GeneralStateAction.SET_BOTTOM_BAR_STATE
+          payload: boolean
       }
 
 export default GeneralStateActions

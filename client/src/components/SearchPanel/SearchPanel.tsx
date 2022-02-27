@@ -34,8 +34,8 @@ export const SearchPanel = (props: SearchPanelProps): JSX.Element | null => {
     const [y, setY] = React.useState(0)
     const [xDelta, setXDelta] = React.useState(0)
     const [yDelta, setYDelta] = React.useState(0)
-    const [searchText, setSearchText] = React.useState('')
-    const [isLocked, setIsLocked] = React.useState(false)
+    // const [searchText, setSearchText] = React.useState('')
+    // const [isLocked, setIsLocked] = React.useState(false)
     const [isDragging, setIsDragging] = React.useState(false)
 
     useEffect(() => {
@@ -108,7 +108,7 @@ export const SearchPanel = (props: SearchPanelProps): JSX.Element | null => {
                 backgroundColor: bgColor,
                 //    , transform: `translate(${x}px, ${y}px)`
             }}
-            draggable={!isLocked}
+            // draggable={!isLocked}
             // onDrag={onDrag}
             onMouseDown={startDragging}
         ></div>

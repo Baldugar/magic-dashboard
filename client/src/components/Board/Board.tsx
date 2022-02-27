@@ -3,7 +3,7 @@ import { Column } from 'components/Board/Column'
 import React from 'react'
 import { Droppable } from 'react-beautiful-dnd'
 import { GeneralState } from 'store/GeneralState/GeneralState.reducer'
-import { DeckBoard, MODAL_ACTION, MODALS } from 'utils/types'
+import { DeckBoard, MODAL_ACTION, DECK_EDITOR_MODALS } from 'utils/types'
 
 export interface BoardProps {
     deckBoard: DeckBoard
@@ -13,7 +13,7 @@ export interface BoardProps {
     stackCardsMode: boolean
     onRemoveClick: (payload: { cardIndex: number; columnIndex: number }) => void
     onAddClick: (payload: { cardIndex: number; columnIndex: number }) => void
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     setGeneralState: (payload: Partial<GeneralState>) => void
     onDeleteColumnClick: (columnIndex: number, name: string) => void
 }

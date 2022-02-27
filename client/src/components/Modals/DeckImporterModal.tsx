@@ -3,11 +3,11 @@ import { makeStyles } from '@mui/styles'
 import React, { Dispatch, MutableRefObject, SetStateAction } from 'react'
 import colors from 'utils/colors'
 import { submitDeck } from 'utils/funcs'
-import { Deck, MODALS, MODAL_ACTION } from 'utils/types'
+import { Deck, DECK_EDITOR_MODALS, MODAL_ACTION } from 'utils/types'
 
 export interface DeckImporterModalProps {
     open: boolean
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     deckImportRef: MutableRefObject<HTMLTextAreaElement | undefined>
     setDeck: Dispatch<SetStateAction<Deck | undefined>>
 }
@@ -29,9 +29,9 @@ const DeckImporterModal = (props: DeckImporterModalProps): JSX.Element => {
     const { open, setModalState, deckImportRef, setDeck } = props
     const classes = useStyles()
 
-    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.IMPORT_DECK })
+    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.IMPORT_DECK })
     const handleOpenLoadingModal = () =>
-        setModalState({ action: MODAL_ACTION.OPEN, target: MODALS.LOADING, message: 'Fetching Deck...' })
+        setModalState({ action: MODAL_ACTION.OPEN, target: DECK_EDITOR_MODALS.LOADING, message: 'Fetching Deck...' })
 
     return (
         <Modal

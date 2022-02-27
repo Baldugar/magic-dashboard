@@ -3,10 +3,10 @@ import { Backdrop, Button, Fade, IconButton, Modal, Paper, TextField, Tooltip, T
 import { Box } from '@mui/system'
 import React, { MutableRefObject } from 'react'
 import colors from 'utils/colors'
-import { MODAL_ACTION, MODALS } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS } from 'utils/types'
 
 export interface EditColumnModalProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     editColumnRef: MutableRefObject<HTMLTextAreaElement | undefined>
     open: boolean
     columnToEdit:
@@ -21,9 +21,9 @@ export interface EditColumnModalProps {
 const EditColumnModal = (props: EditColumnModalProps): JSX.Element => {
     const { open, setModalState, editColumnRef, editColumn, columnToEdit } = props
 
-    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.EDIT_COLUMN })
+    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.EDIT_COLUMN })
     const handleOpenDeleteConfirmationModal = () =>
-        setModalState({ action: MODAL_ACTION.OPEN, target: MODALS.DELETE_COLUMN_CONFIRMATION })
+        setModalState({ action: MODAL_ACTION.OPEN, target: DECK_EDITOR_MODALS.DELETE_COLUMN_CONFIRMATION })
 
     if (columnToEdit === undefined) {
         return <div />

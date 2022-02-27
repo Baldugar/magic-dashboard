@@ -18,7 +18,7 @@ import React, { KeyboardEvent, SyntheticEvent, useRef, useState } from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { GeneralState } from 'store/GeneralState/GeneralState.reducer'
 import colors from 'utils/colors'
-import { MODAL_ACTION, MODALS, BoardColumn, Card, DeckBoard } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS, BoardColumn, Card, DeckBoard } from 'utils/types'
 
 export interface ColumnProps {
     index: number
@@ -29,7 +29,7 @@ export interface ColumnProps {
     draggedCard: string
     onDeleteColumnClick: (columnIndex: number, name: string) => void
     setGeneralState: (payload: Partial<GeneralState>) => void
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     deckBoard: DeckBoard
     onRemoveClick: (payload: { cardIndex: number; columnIndex: number }) => void
     onAddClick: (payload: { cardIndex: number; columnIndex: number }) => void
@@ -114,7 +114,7 @@ export const Column = (props: ColumnProps): JSX.Element => {
                                         })
                                         setModalState({
                                             action: MODAL_ACTION.OPEN,
-                                            target: MODALS.EDIT_COLUMN,
+                                            target: DECK_EDITOR_MODALS.EDIT_COLUMN,
                                         })
                                     }}
                                     style={{ position: 'absolute', top: 0, right: 0, zIndex: 1000 }}
@@ -178,7 +178,7 @@ export const Column = (props: ColumnProps): JSX.Element => {
                                             setGeneralState({ selectedCard: card })
                                             setModalState({
                                                 action: MODAL_ACTION.OPEN,
-                                                target: MODALS.CARD_DETAILS,
+                                                target: DECK_EDITOR_MODALS.CARD_DETAILS,
                                             })
                                         }}
                                         columnIndex={index}
@@ -245,7 +245,7 @@ export const Column = (props: ColumnProps): JSX.Element => {
                                             })
                                             setModalState({
                                                 action: MODAL_ACTION.OPEN,
-                                                target: MODALS.EDIT_COLUMN,
+                                                target: DECK_EDITOR_MODALS.EDIT_COLUMN,
                                             })
                                         }}
                                     >

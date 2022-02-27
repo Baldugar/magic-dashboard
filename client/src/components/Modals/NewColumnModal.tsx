@@ -2,10 +2,10 @@ import { Backdrop, Button, Fade, Modal, Paper, TextField, Typography } from '@mu
 import { Box } from '@mui/system'
 import React, { MutableRefObject } from 'react'
 import colors from 'utils/colors'
-import { MODAL_ACTION, MODALS } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS } from 'utils/types'
 
 export interface NewColumnModalProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     newColumnRef: MutableRefObject<HTMLTextAreaElement | undefined>
     open: boolean
     createColumn: () => void
@@ -14,7 +14,7 @@ export interface NewColumnModalProps {
 const NewColumnModal = (props: NewColumnModalProps): JSX.Element => {
     const { open, setModalState, newColumnRef, createColumn } = props
 
-    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.NEW_COLUMN })
+    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.NEW_COLUMN })
 
     return (
         <Modal

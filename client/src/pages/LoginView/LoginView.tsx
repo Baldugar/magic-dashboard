@@ -1,21 +1,21 @@
 import { Box, Button, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import SearchPanel from 'components/SearchPanel'
 
 export const LoginView = (): JSX.Element => {
     const { loginWithRedirect, logout, user, getAccessTokenSilently } = useAuth0()
-    if (user) {
-        const { sub } = user
-    }
+    // if (user) {
+    //     const { sub } = user
+    // }
 
-    const a: number[] = Array(22).fill(0, 0, -1)
+    // const a: number[] = Array(22).fill(0, 0, -1)
 
-    const [x, setX] = useState<number>(Math.floor(window.innerWidth / 2) - 50)
-    const [y, setY] = useState<number>(Math.floor(window.innerHeight / 2) - 50)
+    // const [x, setX] = useState<number>(Math.floor(window.innerWidth / 2) - 50)
+    // const [y, setY] = useState<number>(Math.floor(window.innerHeight / 2) - 50)
 
     return (
-        <Box>
+        <Box bgcolor={'#123456'}>
             <Button onClick={() => loginWithRedirect()}>LOGIN</Button>
             <Button onClick={() => logout()}>LOGOU</Button>
             {user && <Typography>{JSON.stringify(user)}</Typography>}

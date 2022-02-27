@@ -1,11 +1,11 @@
 import { Backdrop, Button, Fade, Modal, Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
-import { MODAL_ACTION, MODALS } from 'utils/types'
+import { MODAL_ACTION, DECK_EDITOR_MODALS } from 'utils/types'
 import colors from 'utils/colors'
 
 export interface DeleteColumnConfirmationModalProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     open: boolean
     confirmDeleteColumn: () => void
 }
@@ -14,7 +14,7 @@ const DeleteColumnConfirmationModal = (props: DeleteColumnConfirmationModalProps
     const { open, setModalState, confirmDeleteColumn } = props
 
     const handleCloseModal = () =>
-        setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.DELETE_COLUMN_CONFIRMATION })
+        setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.DELETE_COLUMN_CONFIRMATION })
 
     return (
         <Modal

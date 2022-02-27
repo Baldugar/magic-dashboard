@@ -1,3 +1,5 @@
+import { ApiCard } from 'graphql/types'
+
 const BASE_URL = 'https://api.scryfall.com/'
 
 export enum API_CALL_TYPE {
@@ -23,4 +25,8 @@ export const sendAPIRequest = async <T>(func: API_FUNCTION, method: 'GET' | 'POS
     }).then((r) => {
         return r.json() as Promise<T>
     })
+}
+
+export const sendCardQuery = async (query: string): Promise<ApiCard[]> => {
+    return (await sendAPIRequest<{ data: ApiCard[] }>({ type: API_CALL_TYPE.CARDS, query }, 'GET')).data
 }

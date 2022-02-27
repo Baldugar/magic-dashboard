@@ -1,8 +1,22 @@
 import { format } from 'date-fns'
 import { chunk, cloneDeep, flatten, sortBy } from 'lodash'
 import { DropResult } from 'react-beautiful-dnd'
+import { CatalogueFilterType } from 'store/CatalogueState/CatalogueState.reducer'
 import { API_CALL_TYPE, sendAPIRequest } from 'utils/api'
-import { ApiCard, Card, Deck, DeckBoard, ImportedCard, MODALS, MODAL_ACTION } from 'utils/types'
+import { MTG_TYPE_DIVIDER } from 'utils/constants'
+import { isNegativeTB, isNotUnsetTB, isPositiveTB } from 'utils/ternaryBoolean'
+import {
+    ApiCard,
+    Card,
+    Deck,
+    DeckBoard,
+    ImportedCard,
+    DECK_EDITOR_MODALS,
+    MODAL_ACTION,
+    MTGACard,
+    CARD_TYPES,
+    RARITY,
+} from 'utils/types'
 
 const cardToCardInDeck = (card: string): ImportedCard => {
     const splittedCard = card.trim().split(' ')
@@ -33,7 +47,7 @@ const cardToCardInDeck = (card: string): ImportedCard => {
 export const submitDeck = async (
     deckImportRef: React.MutableRefObject<HTMLTextAreaElement | undefined>,
     setDeck: React.Dispatch<React.SetStateAction<Deck | undefined>>,
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void,
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void,
 ): Promise<void> => {
     let submittedCardsArray = deckImportRef?.current?.value
         .trim()
@@ -129,7 +143,7 @@ export const submitDeck = async (
                 const done = () => {
                     count--
                     if (count === 0) {
-                        setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.LOADING })
+                        setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.LOADING })
                         setDeck(deckToState)
                     }
                 }
@@ -184,17 +198,17 @@ export const submitDeck = async (
                                 done()
                             })
                             .catch((reason) => {
-                                setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.LOADING })
+                                setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.LOADING })
                                 alert(`Imported deck format is not correct, please check it and try again. ${reason}`)
                             })
                     }, 100 * i)
                 }
             } catch (reason) {
-                setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.LOADING })
+                setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.LOADING })
                 alert(`Imported deck format is not correct, please check it and try again. ${reason}`)
             }
         } else {
-            setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.LOADING })
+            setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.LOADING })
             alert('Imported deck format is not correct, please check it and try again.')
         }
     }
@@ -345,4 +359,275 @@ export const downloadExportedDeck = (deckString: string): void => {
     if (element.parentElement) {
         element.parentElement.removeChild(element)
     }
+}
+
+export const getCardImages = (card: MTGACard): string[] => {
+    const images: string[] = []
+
+    if (card.image_uris) {
+        images.push(card.image_uris.normal)
+    } else {
+        if (card.card_faces) {
+            card.card_faces.forEach((face) => {
+                if (face.image_uris) {
+                    images.push(face.image_uris.normal)
+                }
+            })
+        }
+    }
+
+    return images
+}
+
+export const getCardTypeFromString = (cardType: string): CARD_TYPES => {
+    switch (cardType.toUpperCase()) {
+        case CARD_TYPES.ARTIFACT:
+            return CARD_TYPES.ARTIFACT
+        case CARD_TYPES.CREATURE:
+            return CARD_TYPES.CREATURE
+        case CARD_TYPES.ENCHANTMENT:
+            return CARD_TYPES.ENCHANTMENT
+        case CARD_TYPES.INSTANT:
+            return CARD_TYPES.INSTANT
+        case CARD_TYPES.LAND:
+            return CARD_TYPES.LAND
+        case CARD_TYPES.PLANESWALKER:
+            return CARD_TYPES.PLANESWALKER
+        case CARD_TYPES.SORCERY:
+            return CARD_TYPES.SORCERY
+        default:
+            return CARD_TYPES.LAND
+    }
+}
+
+export const getCardTypeAndSubtypes = (card: MTGACard): { types: CARD_TYPES[]; subtypes: string[] } => {
+    const typeLine = card.type_line.split(MTG_TYPE_DIVIDER).map((t) => t.trim())
+    const types = typeLine[0].split(' ')
+    const cardTypes = types.map((t) => {
+        if (t.toUpperCase() === CARD_TYPES.ARTIFACT) {
+            return CARD_TYPES.ARTIFACT
+        }
+        if (t.toUpperCase() === CARD_TYPES.CREATURE) {
+            return CARD_TYPES.CREATURE
+        }
+        if (t.toUpperCase() === CARD_TYPES.ENCHANTMENT) {
+            return CARD_TYPES.ENCHANTMENT
+        }
+        if (t.toUpperCase() === CARD_TYPES.INSTANT) {
+            return CARD_TYPES.INSTANT
+        }
+        if (t.toUpperCase() === CARD_TYPES.LAND) {
+            return CARD_TYPES.LAND
+        }
+        if (t.toUpperCase() === CARD_TYPES.PLANESWALKER) {
+            return CARD_TYPES.PLANESWALKER
+        }
+        if (t.toUpperCase() === CARD_TYPES.SORCERY) {
+            return CARD_TYPES.SORCERY
+        }
+        return CARD_TYPES.LAND
+    })
+    const subTypes = typeLine.length > 1 ? typeLine[1].split(' ') : []
+    return { types: cardTypes, subtypes: subTypes }
+}
+
+export const filterCardType = (cards: MTGACard[], cardType: CARD_TYPES): MTGACard[] =>
+    cards.filter((card) => {
+        try {
+            return card.type_line.split(MTG_TYPE_DIVIDER)[0].toUpperCase().includes(cardType)
+        } catch (reason) {
+            console.log('CARD BROKE', card, reason)
+        }
+    })
+
+export const calculateSubtypes = (cards: MTGACard[]): string[] =>
+    [
+        ...cards.reduce((subtypes, card) => {
+            const typeLine = card.type_line.split(MTG_TYPE_DIVIDER)
+            const cardSubtypes = typeLine[1] ? typeLine[1].split(' ') : []
+            for (const subtype of cardSubtypes) {
+                if (
+                    !subtypes.includes(subtype) &&
+                    subtype.length > 0 &&
+                    subtype !== '//' &&
+                    subtype !== 'Legendary' &&
+                    subtype !== 'Creature' &&
+                    subtype !== 'Artifact' &&
+                    subtype !== 'Enchantment' &&
+                    subtype !== 'Instant' &&
+                    subtype !== 'Land' &&
+                    subtype !== 'Planeswalker' &&
+                    subtype !== 'Sorcery'
+                ) {
+                    subtypes.push(subtype)
+                }
+            }
+            return subtypes
+        }, [] as string[]),
+    ].sort((a, b) => a.localeCompare(b))
+
+export const calculateExpansions = (cards: MTGACard[]): { set: string; set_name: string; released_at: string }[] =>
+    sortBy(
+        cards.reduce((expansions, card) => {
+            if (card.set && expansions.find((e) => e.set === card.set) === undefined) {
+                expansions.push({ set: card.set, set_name: card.set_name, released_at: card.released_at })
+            }
+            return expansions
+        }, [] as { set: string; set_name: string; released_at: string }[]),
+        'released_at',
+    )
+
+export const rarityEnumToString = (rarity: RARITY | string): string => {
+    if (rarity === RARITY.COMMON) {
+        return 'common'
+    }
+    if (rarity === RARITY.UNCOMMON) {
+        return 'uncommon'
+    }
+    if (rarity === RARITY.RARE) {
+        return 'rare'
+    }
+    return 'mythic'
+}
+
+export const filterCards = (cards: MTGACard[], filter: CatalogueFilterType): MTGACard[] => {
+    let remainingCards = [...cards]
+
+    // SEARCH
+    // TODO: PARSER
+
+    // COLOR
+    const colorEntries = Object.entries(filter.color).filter(([, value]) => isNotUnsetTB(value))
+    const multi = filter.multiColor
+    if (colorEntries.length > 0) {
+        // SOLO 1
+        if (colorEntries.length === 1) {
+            // POSITIVO
+            if (isPositiveTB(colorEntries[0][1])) {
+                remainingCards = remainingCards.filter(
+                    (card) =>
+                        card.color_identity.includes(colorEntries[0][0]) &&
+                        (isPositiveTB(multi)
+                            ? card.color_identity.length > 1
+                            : isNegativeTB(multi)
+                            ? card.color_identity.length === 1
+                            : true),
+                )
+            } else {
+                // NEGATIVO
+                remainingCards = remainingCards.filter(
+                    (card) =>
+                        !card.color_identity.includes(colorEntries[0][0]) &&
+                        (isPositiveTB(multi)
+                            ? card.color_identity.length > 1
+                            : isNegativeTB(multi)
+                            ? card.color_identity.length === 1
+                            : true),
+                )
+            }
+        } else {
+            // TODOS POSITIVOS
+            if (colorEntries.every(([, value]) => isPositiveTB(value))) {
+                const colors = colorEntries.map(([color]) => color)
+                if (isPositiveTB(multi)) {
+                    remainingCards = remainingCards.filter(
+                        (card) =>
+                            colors.every((c) => card.color_identity.includes(c)) && card.color_identity.length > 1,
+                    )
+                } else if (isNegativeTB(multi)) {
+                    remainingCards = remainingCards.filter(
+                        (card) =>
+                            colors.some((c) => card.color_identity.includes(c)) && card.color_identity.length === 1,
+                    )
+                } else {
+                    remainingCards = remainingCards.filter((card) =>
+                        colors.some((c) => card.color_identity.includes(c)),
+                    )
+                }
+            }
+            // TODOS NEGATIVOS
+            else if (colorEntries.every(([, value]) => isNegativeTB(value))) {
+                const colors = colorEntries.map(([color]) => color)
+                remainingCards = remainingCards.filter(
+                    (card) =>
+                        card.color_identity.every((c) => !colors.includes(c)) &&
+                        (isPositiveTB(multi)
+                            ? card.color_identity.length > 1
+                            : isNegativeTB(multi)
+                            ? card.color_identity.length === 1
+                            : true),
+                )
+            }
+            // MIXTO
+            else {
+                const positiveColors = colorEntries.filter(([, color]) => isPositiveTB(color))
+                const negativeColors = colorEntries.filter(([, color]) => isNegativeTB(color))
+                remainingCards = remainingCards.filter(
+                    (card) =>
+                        card.color_identity.some((c) => positiveColors.map(([color]) => color).includes(c)) &&
+                        card.color_identity.every((c) => !negativeColors.map(([color]) => color).includes(c)) &&
+                        (isPositiveTB(multi)
+                            ? card.color_identity.length > 1
+                            : isNegativeTB(multi)
+                            ? card.color_identity.length === 1
+                            : true),
+                )
+            }
+        }
+    } else {
+        if (isPositiveTB(multi)) {
+            remainingCards = remainingCards.filter((card) => card.color_identity.length > 1)
+        } else if (isNegativeTB(multi)) {
+            remainingCards = remainingCards.filter((card) => card.color_identity.length === 1)
+        }
+    }
+
+    // RARITY
+    const rarityEntries = Object.entries(filter.rarity).filter(([, value]) => isNotUnsetTB(value))
+    if (rarityEntries.length > 0) {
+        if (rarityEntries.length === 1) {
+            if (isPositiveTB(rarityEntries[0][1])) {
+                remainingCards = remainingCards.filter(
+                    (card) => card.rarity === rarityEnumToString(rarityEntries[0][0]),
+                )
+            } else {
+                remainingCards = remainingCards.filter(
+                    (card) => card.rarity !== rarityEnumToString(rarityEntries[0][0]),
+                )
+            }
+        } else {
+            const positiveRarities = rarityEntries.filter(([, value]) => isPositiveTB(value))
+            const negativeRarities = rarityEntries.filter(([, value]) => isNegativeTB(value))
+            // TODOS POSITIVOS
+            if (positiveRarities.length === rarityEntries.length) {
+                remainingCards = remainingCards.filter((card) =>
+                    positiveRarities.some(([rarity]) => rarityEnumToString(rarity) === card.rarity),
+                )
+            }
+            // TODOS NEGATIVOS
+            else if (negativeRarities.length === rarityEntries.length) {
+                remainingCards = remainingCards.filter((card) =>
+                    negativeRarities.every(([rarity]) => rarityEnumToString(rarity) !== card.rarity),
+                )
+            }
+            // MIXTO
+            else {
+                remainingCards = remainingCards.filter(
+                    (card) =>
+                        positiveRarities.some(([rarity]) => rarityEnumToString(rarity) === card.rarity) &&
+                        negativeRarities.every(([rarity]) => rarityEnumToString(rarity) !== card.rarity),
+                )
+            }
+        }
+    }
+
+    // MANA COST
+
+    // SET
+
+    // TYPE
+
+    // SUBTYPE
+
+    return remainingCards
 }

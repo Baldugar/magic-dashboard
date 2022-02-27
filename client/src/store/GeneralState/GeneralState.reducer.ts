@@ -1,16 +1,17 @@
 import { cloneDeep, isEqual } from 'lodash'
 import GeneralStateActions, { GeneralStateAction } from 'store/GeneralState/GeneralState.actions'
-import { Card, DeckBoard, MODALS, MODAL_ACTION, SETTINGS } from 'utils/types'
+import { Card, DeckBoard, DECK_EDITOR_MODALS, MODAL_ACTION, SETTINGS } from 'utils/types'
 
 export interface GeneralState {
     // modals: { [key in keyof typeof MODALS]: boolean }
-    modals: Record<MODALS, boolean>
+    modals: Record<DECK_EDITOR_MODALS, boolean>
     loadingMessage: string
     settings: Record<SETTINGS, boolean>
     deckBoard: DeckBoard
     cardToDelete: { cardIndex: number; columnIndex: number } | undefined
     columnToEdit: { columnIndex: number; name: string } | undefined
     selectedCard: Card | undefined
+    bottomBarOpened: boolean
 }
 
 export const initialGeneralState: GeneralState = {
@@ -36,6 +37,7 @@ export const initialGeneralState: GeneralState = {
     cardToDelete: undefined,
     columnToEdit: undefined,
     selectedCard: undefined,
+    bottomBarOpened: true,
 }
 
 function GeneralStateReducer(state: GeneralState = initialGeneralState, action: GeneralStateActions): GeneralState {
@@ -44,7 +46,7 @@ function GeneralStateReducer(state: GeneralState = initialGeneralState, action: 
         case GeneralStateAction.SET_MODAL_STATE:
             const currentModals = cloneDeep(currentState.modals)
             currentModals[action.payload.target] = action.payload.action === MODAL_ACTION.CLOSE ? false : true
-            if (action.payload.target === MODALS.LOADING && action.payload.message !== undefined) {
+            if (action.payload.target === DECK_EDITOR_MODALS.LOADING && action.payload.message !== undefined) {
                 if (action.payload.action === MODAL_ACTION.OPEN) {
                     currentState.loadingMessage = action.payload.message
                 } else {
@@ -52,13 +54,13 @@ function GeneralStateReducer(state: GeneralState = initialGeneralState, action: 
                 }
             }
             if (
-                action.payload.target === MODALS.DELETE_CARD_CONFIRMATION &&
+                action.payload.target === DECK_EDITOR_MODALS.DELETE_CARD_CONFIRMATION &&
                 action.payload.action === MODAL_ACTION.CLOSE
             ) {
                 currentState.cardToDelete = undefined
             }
             if (
-                action.payload.target === MODALS.DELETE_COLUMN_CONFIRMATION &&
+                action.payload.target === DECK_EDITOR_MODALS.DELETE_COLUMN_CONFIRMATION &&
                 action.payload.action === MODAL_ACTION.CLOSE
             ) {
                 currentState.columnToEdit = undefined
@@ -147,6 +149,11 @@ function GeneralStateReducer(state: GeneralState = initialGeneralState, action: 
                     DELETE_COLUMN_CONFIRMATION: false,
                     EDIT_COLUMN: false,
                 },
+            }
+        case GeneralStateAction.SET_BOTTOM_BAR_STATE:
+            return {
+                ...state,
+                bottomBarOpened: action.payload,
             }
         default:
             return state

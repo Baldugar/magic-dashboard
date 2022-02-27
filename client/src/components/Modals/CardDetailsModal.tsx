@@ -3,10 +3,10 @@ import { Box } from '@mui/system'
 import BoardCard from 'components/Board/BoardCard'
 import React from 'react'
 import colors from 'utils/colors'
-import { Card, MODALS, MODAL_ACTION } from 'utils/types'
+import { Card, DECK_EDITOR_MODALS, MODAL_ACTION } from 'utils/types'
 
 export interface CardDetailsModalProps {
-    setModalState: (payload: { action: MODAL_ACTION; target: MODALS; message?: string }) => void
+    setModalState: (payload: { action: MODAL_ACTION; target: DECK_EDITOR_MODALS; message?: string }) => void
     open: boolean
     card: Card | undefined
 }
@@ -14,7 +14,8 @@ export interface CardDetailsModalProps {
 const CardDetailsModal = (props: CardDetailsModalProps): JSX.Element => {
     const { open, card, setModalState } = props
 
-    const handleCloseModal = () => setModalState({ action: MODAL_ACTION.CLOSE, target: MODALS.CARD_DETAILS })
+    const handleCloseModal = () =>
+        setModalState({ action: MODAL_ACTION.CLOSE, target: DECK_EDITOR_MODALS.CARD_DETAILS })
 
     if (card === undefined) {
         return <div />
