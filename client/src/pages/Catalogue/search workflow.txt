@@ -1,0 +1,36 @@
+MANA SELECTOR
+    - 0: todos
+    - Si alguno que si (Solo 1 seleccionao): Buscamos ese color_identity
+    - Si alguno que no (Solo 1 seleccionao): Todas que no tengan ese color_identity
+    - Si alguno que si, alguno que no: color_identity incluye al que si y sin el que no
+    - Si tenemos el multi (Solo multi), solo se buscan donde color_identity.length > 1
+    - Si tenemos el multi y alguno que si: color_identity.length > 1 e inlcuye el color_identity
+    - Si tenemos el multi y alguno que no: color_identity.length > 1 y NO incluir el color_identity
+    - Si tenemos el multi y  alguno que si, alguno que no: color_identity.length > 1 e incluye el color_identity del que si, y NO del que no
+
+RARITY / CMC / SET
+    - 0 todos
+    - Casos normales
+
+TIPOS
+    COMUN
+        - 0 todos
+        - 1 positivo
+            - Sin subtipos
+                - Solo ese
+            - Con subtipos
+                - 1 positivo, solo ese
+                - 1 negativo, todos menos ese
+        - 1 negativo
+            - Sin subtipos
+                - Todos menos ese
+    OR
+        - 2 positivos
+            - Sin subtipos
+                - Cualquiera de esos
+            - Con subtipos
+                - 
+    
+
+
+PONER SWITCH Y/O PARA TIPOS Y SUBTIPOS

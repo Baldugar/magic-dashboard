@@ -4,10 +4,30 @@
 
 # client 
 client/build
+client/coverage
+client/.nyc_output
+client/nohup.out
 client/node_modules
 client/.env
 client/.eslintcache
+client/cypress/screenshots
 !/client/.env.dist
+
+
+# docker
+docker/app
+
+# keycloak
+keycloak/postgres_data
+
+# server
+server/jsonConfigurator
+server/nohup.out
+server/jsonConfigurator.exe
+server/settings.development.json
+server/settings.json
+server/logs
+server/scripts/generateModelFromXLSX/*.json
 
 # misc
 .history

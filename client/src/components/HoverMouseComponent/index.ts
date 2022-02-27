@@ -1,0 +1,2 @@
+import HoverMouseComponent from 'components/HoverMouseComponent/HoverMouseComponent'
+export default HoverMouseComponent
