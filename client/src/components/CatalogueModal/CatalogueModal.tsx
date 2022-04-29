@@ -41,7 +41,7 @@ const CatalogueModal = (props: CatalogModalProps): JSX.Element | null => {
         }
     }, [open])
 
-    console.log(card)
+    console.log(JSON.stringify(card))
 
     return (
         <Modal

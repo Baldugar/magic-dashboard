@@ -114,6 +114,24 @@ export const useCatalogueDatabaseState = (): useCatalogueDatabaseStateReturn => 
             }
             if (cards.length > 0) {
                 const copyCards: MTGACard[] = [...cards]
+                console.log(
+                    copyCards.filter((c) => c.variation),
+                    // .map((c) => ({ a0: c.rulings_uri, a: c.name, b: c.scryfall_uri, c: c.set_name, d: c.id })),
+                    // .map((c) => ({ a0: c.oracle_text, a1: c.layout, a: c.name, b: c.scryfall_uri, c: c.set_name })),
+                    // .map((c) => c.set_uri),
+                )
+                // console.log(
+                //     copyCards
+                //         .reduce((acc, curr) => {
+                //             for (const keyword of curr.keywords) {
+                //                 if (!acc.includes(keyword)) {
+                //                     acc.push(keyword)
+                //                 }
+                //             }
+                //             return acc
+                //         }, [] as string[])
+                //         .sort(),
+                // )
                 const artistGroups = groupBy(
                     copyCards.map((c) => ({ artist: c.artist, images: c.image_uris, card_faces: c.card_faces })),
                     'artist',

@@ -1,0 +1,54 @@
+### Inputs
+
+input CardInCollectionInput {
+  cardId: ID!
+  userID: ID!
+}
+
+input CreateDeckInput {
+  name: String!
+  description: String!
+  userID: ID!
+  # TODO: Add more fields (Colors, formats, etc.)
+}
+
+input DuplicateDeckInput {
+  oldDeckID: ID!
+  newDeckData: CreateDeckInput!
+}
+
+input SaveDeckInput {
+  deckID: ID!
+}
+
+input CreateCardCategoryInput {
+  type: CategoryType!
+  colors: [Color!]!
+  name: String!
+  description: String
+}
+
+### Types
+
+type MutationResponse {
+  success: Boolean!
+  message: String
+}
+
+### Mutations
+
+type Mutation {
+  # Cards
+  AddCardToCollection(input: CardInCollectionInput!): MutationResponse!
+  RemoveCardFromCollection(input: CardInCollectionInput!): MutationResponse!
+
+  # Decks
+  CreateDeck(input: CreateDeckInput!): MutationResponse!
+  DeleteDeck(deckID: ID!): MutationResponse!
+  DuplicateDeck(input: DuplicateDeckInput!): MutationResponse!
+
+  # Categories
+  CreateCategory(input: CreateCardCategoryInput!): QueryResponse!
+
+  # Users
+}
