@@ -1,13 +1,10 @@
 import { Chip, CssBaseline, IconButton, ThemeProvider } from '@mui/material'
-import DeckEditor from 'pages/DeckEditor'
-import LoginView from 'pages/LoginView'
 import React, { useCallback } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { HashRouter, Redirect, Route, Switch, useHistory } from 'react-router-dom'
 import store, { AppState } from 'store/store'
 import { ModifiedTheme } from 'utils/theme'
-import DeckSelector from 'pages/DeckSelector'
 import { Box } from '@mui/system'
 import Catalogue from 'pages/Catalogue'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
@@ -84,9 +81,6 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
 
 function App(): JSX.Element {
     const navLinks: { path: string; label: string; component: JSX.Element }[] = [
-        { path: '/', label: 'Login', component: <LoginView /> },
-        { path: '/deck-selector', label: 'Deck Selector', component: <DeckSelector /> },
-        { path: '/deck-editor', label: 'Deck Editor', component: <DeckEditor /> },
         { path: '/catalogue', label: 'Catalogue', component: <Catalogue /> },
     ]
 
@@ -103,10 +97,10 @@ function App(): JSX.Element {
                     <ThemeProvider theme={ModifiedTheme}>
                         <Switch>
                             {navLinks.map((link) => (
-                                <Route key={link.path} path={link.path} exact={true} render={() => link.component} />
+                                <Route key={link.path} path={link.path} element={link.component} />
                             ))}
                             <Route>
-                                <Redirect to={'/'} />
+                                <Redirect to={'/catalogue'} />
                             </Route>
                         </Switch>
                         <BottomNavBar navLinks={navLinks} />

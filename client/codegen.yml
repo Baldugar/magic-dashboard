@@ -1,4 +1,4 @@
-schema: ../graphql/*.graphqls
+schema: ../graphql/card_schema.graphqls
 generates:
     ./src/graphql/types.ts:
         plugins:
@@ -8,4 +8,3 @@ generates:
                 enumValues: upper-case#upperCase
             scalars:
                 Time: Date
-                SettingsMap: 'Record<Settings, boolean>'

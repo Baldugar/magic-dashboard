@@ -69,6 +69,7 @@
         "ts:ci": "yarn ts:lint --max-warnings 0 && yarn ts:type",
         "ts:lint": "eslint \"*/**/*.{js,ts,tsx}\" --fix",
         "ts:type": "tsc --noEmit",
+        "check:test": "yarn ts:ci && yarn test",
         "start": "react-scripts start",
         "storybook": "start-storybook -p 9099 -s public",
         "build": "react-scripts build",

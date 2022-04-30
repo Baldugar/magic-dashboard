@@ -1,5 +1,4 @@
 import { groupBy, sortBy } from 'lodash'
-import { fetchCards } from 'pages/DeckSelector/funcs'
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import CatalogueStateActions, { CatalogueStateAction } from 'store/CatalogueState/CatalogueState.actions'
@@ -7,7 +6,7 @@ import { CatalogueFilterType } from 'store/CatalogueState/CatalogueState.reducer
 import { AppState } from 'store/store'
 import { CARD_SIZE_VALUES } from 'utils/constants'
 import { createObjectStore, deleteValue, getAllValue, putBulkValue, putValue } from 'utils/database'
-import { filterCards } from 'utils/funcs'
+import { fetchCards, filterCards } from 'utils/funcs'
 import { CardCategory, CARD_IMAGE_SIZE, MTGACard } from 'utils/types'
 
 export interface useCatalogueDatabaseStateReturn {
