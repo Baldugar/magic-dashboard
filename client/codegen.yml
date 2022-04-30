@@ -5,6 +5,7 @@ generates:
             - typescript
         config:
             namingConvention:
+                typeNames: keep
                 enumValues: upper-case#upperCase
             scalars:
                 Time: Date

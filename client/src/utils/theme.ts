@@ -1,11 +1,11 @@
-import { createTheme, responsiveFontSizes, Theme } from '@material-ui/core'
+import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 import colors from './colors'
 import fontStyles from './fontStyles'
 // const breakpoints = createBreakpoints({})
 // export const smallMobile = 385
 // export const smallestMobile = 360
 
-const theme: Theme = createTheme({
+const theme = createTheme({
     palette: {
         primary: {
             main: colors.main,

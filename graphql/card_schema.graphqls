@@ -1,5 +1,16 @@
 scalar Time
 
+enum CardType {
+  CREATURE
+  LAND
+  INSTANT
+  SORCERY
+  ENCHANTMENT
+  PLANESWALKER
+  ARTIFACT
+  UNKNOWN
+}
+
 enum Color {
   White
   Blue

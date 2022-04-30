@@ -2,7 +2,7 @@ import { Chip, CssBaseline, IconButton, ThemeProvider } from '@mui/material'
 import React, { useCallback } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { HashRouter, Redirect, Route, Switch, useHistory } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import store, { AppState } from 'store/store'
 import { ModifiedTheme } from 'utils/theme'
 import { Box } from '@mui/system'
@@ -13,7 +13,7 @@ import GeneralStateActions, { GeneralStateAction } from 'store/GeneralState/Gene
 
 const BottomNavBar = (props: { navLinks: { path: string; label: string; component: JSX.Element }[] }) => {
     const { navLinks } = props
-    const history = useHistory()
+    const navigate = useNavigate()
     const {
         generalState: { bottomBarOpened: open },
     } = useSelector((appState: AppState) => ({
@@ -72,7 +72,7 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
             </Box>
             {navLinks.map((link) => (
                 <Box key={link.path}>
-                    <Chip label={link.label} onClick={() => history.push(link.path)} />
+                    <Chip label={link.label} onClick={() => navigate(link.path)} />
                 </Box>
             ))}
         </Box>
@@ -95,14 +95,12 @@ function App(): JSX.Element {
             >
                 <Provider store={store}>
                     <ThemeProvider theme={ModifiedTheme}>
-                        <Switch>
+                        <Routes>
                             {navLinks.map((link) => (
                                 <Route key={link.path} path={link.path} element={link.component} />
                             ))}
-                            <Route>
-                                <Redirect to={'/catalogue'} />
-                            </Route>
-                        </Switch>
+                            <Route path={'/'} element={<Navigate to={'/catalogue'} />} />
+                        </Routes>
                         <BottomNavBar navLinks={navLinks} />
                         <CssBaseline />
                     </ThemeProvider>

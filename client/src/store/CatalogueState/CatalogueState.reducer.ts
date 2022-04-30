@@ -1,21 +1,19 @@
+import { Rarity, Color, CardType, Set } from 'graphql/types'
 import { cloneDeep } from 'lodash'
 import CatalogueStateActions, { CatalogueStateAction } from 'store/CatalogueState/CatalogueState.actions'
 import { TernaryBoolean } from 'utils/ternaryBoolean'
-import { CARD_TYPES, COLORS, RARITY } from 'utils/types'
-
 export type CMCFilter = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 'infinite'
 
 export interface CatalogueFilterType {
     searchString: string
-    rarity: { [key in RARITY]: TernaryBoolean }
-    color: { [key in COLORS]: TernaryBoolean }
-    manaCosts: { [key in CMCFilter]: TernaryBoolean }
-    cardTypes: { [key in CARD_TYPES]: TernaryBoolean }
+    rarity: Record<Rarity, TernaryBoolean>
+    color: Record<Color, TernaryBoolean>
+    manaCosts: Record<CMCFilter, TernaryBoolean>
+    cardTypes: Record<CardType, TernaryBoolean>
     multiColor: TernaryBoolean
-    subtype: { [key in CARD_TYPES]: { [subkey: string]: TernaryBoolean } }
+    subtype: Record<CardType, Record<string, TernaryBoolean>>
     categories: string[]
-    expansions: { [key: string]: TernaryBoolean }
-    andOr: 'and' | 'or'
+    expansions: Record<Set, TernaryBoolean>
 }
 
 export interface CatalogueState {
@@ -27,18 +25,18 @@ export interface CatalogueState {
 export const initialCatalogueState: CatalogueState = {
     filter: {
         color: {
-            B: 0,
-            C: 0,
-            G: 0,
-            R: 0,
-            U: 0,
-            W: 0,
+            Black: 0,
+            Blue: 0,
+            Green: 0,
+            Red: 0,
+            White: 0,
+            Colorless: 0,
         },
         rarity: {
-            C: 0,
-            M: 0,
-            R: 0,
-            U: 0,
+            Common: 0,
+            Uncommon: 0,
+            Rare: 0,
+            Mythic: 0,
         },
         searchString: '',
         multiColor: 0,
@@ -57,7 +55,6 @@ export const initialCatalogueState: CatalogueState = {
         },
         cardTypes: {
             ARTIFACT: 0,
-            // COMMANDERS: false,
             CREATURE: 0,
             ENCHANTMENT: 0,
             INSTANT: 0,
@@ -67,7 +64,6 @@ export const initialCatalogueState: CatalogueState = {
         },
         subtype: {
             ARTIFACT: {},
-            // COMMANDERS: {},
             CREATURE: {},
             ENCHANTMENT: {},
             INSTANT: {},
@@ -76,8 +72,13 @@ export const initialCatalogueState: CatalogueState = {
             SORCERY: {},
         },
         categories: [],
-        expansions: {},
-        andOr: 'or',
+        expansions: (() => {
+            const expansions = {} as Partial<Record<Set, TernaryBoolean>>
+            Object.keys(Set).forEach((set: string) => {
+                expansions[set as Set] = 0
+            })
+            return expansions as Record<Set, TernaryBoolean>
+        })(),
     },
     zoom: 'IN',
 }

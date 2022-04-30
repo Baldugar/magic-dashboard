@@ -27,6 +27,16 @@ export type CardFace = {
     typeLine?: Maybe<Scalars['String']>
 }
 
+export enum CardType {
+    CREATURE = 'CREATURE',
+    LAND = 'LAND',
+    INSTANT = 'INSTANT',
+    SORCERY = 'SORCERY',
+    ENCHANTMENT = 'ENCHANTMENT',
+    PLANESWALKER = 'PLANESWALKER',
+    ARTIFACT = 'ARTIFACT',
+}
+
 export enum Color {
     WHITE = 'White',
     BLUE = 'Blue',
@@ -72,7 +82,7 @@ export enum Legality {
     RESTRICTED = 'Restricted',
 }
 
-export type MtgaCard = {
+export type MTGACard = {
     __typename?: 'MTGACard'
     cardFaces?: Maybe<Array<CardFace>>
     cmc: Scalars['Int']
@@ -100,9 +110,9 @@ export type MtgaCard = {
     typeLine: Scalars['String']
 }
 
-export type MtgaCard_User = {
+export type MTGACard_User = {
     __typename?: 'MTGACard_User'
-    card: MtgaCard
+    card: MTGACard
     userRating: Scalars['Int']
     userCardTags: Array<UserTag>
     userDeckTags: Array<UserTag>

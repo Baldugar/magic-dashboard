@@ -22,6 +22,7 @@ module.exports = {
             'warn',
             { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
         ],
+        'react/react-in-jsx-scope': 'off',
     },
     ignorePatterns: ['cypress/', 'src/api.ts', '*.js'],
     settings: {

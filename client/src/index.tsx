@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Grid } from '@material-ui/core'
+import { Box, CircularProgress, Grid } from '@mui/material'
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'

@@ -1,4 +1,4 @@
-import { TypographyStyleOptions } from '@material-ui/core/styles/createTypography'
+import { TypographyStyleOptions } from '@mui/material/styles/createTypography'
 
 interface FontStyle {
     [key: string]: TypographyStyleOptions
