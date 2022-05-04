@@ -10,6 +10,7 @@ import Catalogue from 'pages/Catalogue'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { Dispatch } from 'redux'
 import GeneralStateActions, { GeneralStateAction } from 'store/GeneralState/GeneralState.actions'
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
 
 const BottomNavBar = (props: { navLinks: { path: string; label: string; component: JSX.Element }[] }) => {
     const { navLinks } = props
@@ -26,6 +27,7 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
         },
         [dispatch],
     )
+
     return (
         <Box
             position={'fixed'}
@@ -84,29 +86,38 @@ function App(): JSX.Element {
         { path: '/catalogue', label: 'Catalogue', component: <Catalogue /> },
     ]
 
+    const graphQLServerURI = 'http://localhost:8000'
+
+    const apolloClient = new ApolloClient({
+        cache: new InMemoryCache(),
+        uri: graphQLServerURI,
+    })
+
     return (
-        <HashRouter>
-            <Auth0Provider
-                domain="dev-3h8tu4ep.eu.auth0.com"
-                clientId="y4HQ47fZ4u5m7ExMFLwH3KGRwt8fTeRe"
-                redirectUri={window.location.origin}
-                audience="https://dev-3h8tu4ep.eu.auth0.com/api/v2/"
-                scope="read:current_user update:current_user_metadata"
-            >
-                <Provider store={store}>
-                    <ThemeProvider theme={ModifiedTheme}>
-                        <Routes>
-                            {navLinks.map((link) => (
-                                <Route key={link.path} path={link.path} element={link.component} />
-                            ))}
-                            <Route path={'/'} element={<Navigate to={'/catalogue'} />} />
-                        </Routes>
-                        <BottomNavBar navLinks={navLinks} />
-                        <CssBaseline />
-                    </ThemeProvider>
-                </Provider>
-            </Auth0Provider>
-        </HashRouter>
+        <ApolloProvider client={apolloClient}>
+            <HashRouter>
+                <Auth0Provider
+                    domain="dev-3h8tu4ep.eu.auth0.com"
+                    clientId="y4HQ47fZ4u5m7ExMFLwH3KGRwt8fTeRe"
+                    redirectUri={window.location.origin}
+                    audience="https://dev-3h8tu4ep.eu.auth0.com/api/v2/"
+                    scope="read:current_user update:current_user_metadata"
+                >
+                    <Provider store={store}>
+                        <ThemeProvider theme={ModifiedTheme}>
+                            <Routes>
+                                {navLinks.map((link) => (
+                                    <Route key={link.path} path={link.path} element={link.component} />
+                                ))}
+                                <Route path={'/'} element={<Navigate to={'/catalogue'} />} />
+                            </Routes>
+                            <BottomNavBar navLinks={navLinks} />
+                            <CssBaseline />
+                        </ThemeProvider>
+                    </Provider>
+                </Auth0Provider>
+            </HashRouter>
+        </ApolloProvider>
     )
 }
 

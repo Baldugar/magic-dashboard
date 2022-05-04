@@ -4,8 +4,6 @@ generates:
         plugins:
             - typescript
         config:
-            namingConvention:
-                typeNames: keep
-                enumValues: upper-case#upperCase
+            namingConvention: keep
             scalars:
                 Time: Date

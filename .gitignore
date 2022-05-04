@@ -28,6 +28,7 @@ server/settings.development.json
 server/settings.json
 server/logs
 server/scripts/generateModelFromXLSX/*.json
+server/.vscode
 
 # misc
 .history
@@ -43,3 +44,6 @@ server/scripts/generateModelFromXLSX/*.json
 
 *.gitconfig
 node_modules
+
+#arango
+arangodb/arangodb

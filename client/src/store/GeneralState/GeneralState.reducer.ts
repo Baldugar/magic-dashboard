@@ -6,7 +6,7 @@ export interface GeneralState {
 }
 
 export const initialGeneralState: GeneralState = {
-    bottomBarOpened: true,
+    bottomBarOpened: false,
 }
 
 function GeneralStateReducer(state: GeneralState = initialGeneralState, action: GeneralStateActions): GeneralState {

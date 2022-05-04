@@ -1,88 +1,91 @@
-scalar Time
-
 enum CardType {
-  CREATURE
-  LAND
-  INSTANT
-  SORCERY
-  ENCHANTMENT
-  PLANESWALKER
-  ARTIFACT
-  UNKNOWN
+  creature
+  land
+  instant
+  sorcery
+  enchantment
+  planeswalker
+  artifact
 }
 
 enum Color {
-  White
-  Blue
-  Black
-  Red
-  Green
-  Colorless
+  W
+  U
+  B
+  R
+  G
+  C
 }
 
 enum Layout {
-  Adventure
-  Class
-  ModalDfc
-  Normal
-  Saga
-  Split
-  Transform
+  adventure
+  class
+  modal_dfc
+  normal
+  saga
+  split
+  transform
 }
 
 enum Legality {
-  Banned
-  Legal
-  NotLegal
-  Restricted
+  banned
+  legal
+  not_legal
+  restricted
 }
 
 enum Rarity {
-  Common
-  Uncommon
-  Rare
-  Mythic
+  common
+  uncommon
+  rare
+  mythic
 }
 
 enum Set {
-  Afr
-  Ajmp
-  Akr
-  Anb
-  DOM
-  Eld
-  G18
-  Grn
-  Ha1
-  Ha2
-  Ha3
-  Ha4
-  Ha5
-  Iko
-  J21
-  Jmp
-  Khm
-  Klr
-  M19
-  M20
-  M21
-  Mid
-  Neo
-  Oana
-  Pana
-  Rix
-  Rna
-  Snc
-  Sta
-  Stx
-  Thb
-  Vow
-  War
-  Xln
-  Ymid
-  Yneo
-  Znr
+  afr
+  ajmp
+  akr
+  anb
+  dom
+  eld
+  g18
+  grn
+  ha1
+  ha2
+  ha3
+  ha4
+  ha5
+  iko
+  j21
+  jmp
+  khm
+  klr
+  m19
+  m20
+  m21
+  mid
+  neo
+  oana
+  pana
+  rix
+  rna
+  snc
+  sta
+  stx
+  thb
+  vow
+  war
+  xln
+  ymid
+  yneo
+  znr
 }
+
+enum CategoryType {
+  CARD
+  DECK
+}
+
 type Legalities {
   alchemy: Legality!
   brawl: Legality!
@@ -96,60 +99,58 @@ type ImageUris {
   normal: String!
   large: String!
   png: String!
-  artCrop: String!
-  borderCrop: String!
+  art_crop: String!
+  border_crop: String!
 }
 
 type CardFace {
-  colorIndicator: [Color!]
+  color_indicator: [Color!]
   colors: [Color!]
-  flavorText: String
-  imageUris: ImageUris
+  flavor_text: String
+  image_uris: ImageUris
   loyalty: String
-  manaCost: String!
+  mana_cost: String!
   name: String!
-  oracleText: String!
+  oracle_text: String!
   power: String
   toughness: String
-  typeLine: String
+  type_line: String
 }
 
 type MTGACard {
-  cardFaces: [CardFace!]
+  card_faces: [CardFace!]
   cmc: Int!
-  colorIdentity: [Color!]!
+  color_identity: [Color!]!
   colors: [Color!]
-  flavorText: String
+  flavor_text: String
   id: ID!
-  imageUris: ImageUris
+  image_uris: ImageUris
   layout: Layout!
   legalities: Legalities!
   loyalty: String
-  manaCost: String
+  mana_cost: String
   name: String!
-  oracleText: String
+  oracle_text: String
   power: String
-  producedMana: [Color!]
+  produced_mana: [Color!]
   rarity: Rarity!
-  releasedAt: Time!
-  rulingsURI: String!
-  scryfallURI: String!
+  released_at: String!
+  rulings_uri: String!
+  scryfall_uri: String!
   set: Set!
-  setName: String!
-  setURI: String!
+  set_name: String!
+  set_uri: String!
   toughness: String
-  typeLine: String!
-}
-
-type Tag {
-  id: ID!
-  mame: String!
-  colors: [Color!]!
+  type_line: String!
 }
 
 type UserTag {
-  tag: Tag!
+  id: ID!
+  type: String!
+  extra: String!
+  colors: [Color!]!
   comment: String
+  categoryType: CategoryType!
 }
 
 type MTGACard_User {
@@ -158,3 +159,24 @@ type MTGACard_User {
   userCardTags: [UserTag!]!
   userDeckTags: [UserTag!]!
 }
+
+input TagInput {
+  name: String!
+  extra: String!
+  colors: [Color!]!
+  comment: String!
+  categoryType: CategoryType!
+}
+
+type Query {
+  getCards: [MTGACard!]!
+  # getUserCards(userID: ID!): [MTGACard_User!]!
+  # getUserTags(userID: ID!): [UserTag!]!
+}
+
+# type Mutation {
+#   addTag(tag: TagInput!): UserTag!
+#   addUserCard(userID: ID!, cardID: ID!): MTGACard_User!
+#   updateUserCard(userID: ID!, cardID: ID!, userRating: Int!): MTGACard_User!
+#   updateUserTag(userID: ID!, tagID: ID!, comment: String): UserTag!
+# }

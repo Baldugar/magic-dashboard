@@ -1,0 +1,9 @@
+schema: ../graphql/card_schema.graphqls
+generates:
+  ./src/graphql/types.ts:
+    plugins:
+      - typescript
+    config:
+      namingConvention: keep
+      scalars:
+        Time: Date

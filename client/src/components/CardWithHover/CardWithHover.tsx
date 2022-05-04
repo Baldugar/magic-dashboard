@@ -22,7 +22,7 @@ const CardWithHover = (props: CardWithHoverProps): JSX.Element | null => {
         return null
     }
 
-    const { normal, small } = card.imageUris ?? card.cardFaces?.[0].imageUris ?? {}
+    const { normal, small } = card.image_uris ?? card.card_faces?.[0].image_uris ?? {}
 
     if (!small) {
         return null

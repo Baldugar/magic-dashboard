@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  arangodb:
+    image: arangodb
+    restart: always
+    volumes:
+      - ./arangodb/data:/var/lib/arangodb3
+      - ./arangodb/apps:/var/lib/arangodb3-apps
+    environment:
+      ARANGO_ROOT_PASSWORD: arangodb #TODO: please CHANGE this password
+    networks:
+      - magic_dashboard_net
+    ports:
+      - 8529:8529
+
+networks:
+  magic_dashboard_net:

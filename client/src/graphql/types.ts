@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null
+export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> }
@@ -9,61 +10,65 @@ export type Scalars = {
     Boolean: boolean
     Int: number
     Float: number
-    Time: Date
 }
 
 export type CardFace = {
     __typename?: 'CardFace'
-    colorIndicator?: Maybe<Array<Color>>
+    color_indicator?: Maybe<Array<Color>>
     colors?: Maybe<Array<Color>>
-    flavorText?: Maybe<Scalars['String']>
-    imageUris?: Maybe<ImageUris>
+    flavor_text?: Maybe<Scalars['String']>
+    image_uris?: Maybe<ImageUris>
     loyalty?: Maybe<Scalars['String']>
-    manaCost: Scalars['String']
+    mana_cost: Scalars['String']
     name: Scalars['String']
-    oracleText: Scalars['String']
+    oracle_text: Scalars['String']
     power?: Maybe<Scalars['String']>
     toughness?: Maybe<Scalars['String']>
-    typeLine?: Maybe<Scalars['String']>
+    type_line?: Maybe<Scalars['String']>
 }
 
 export enum CardType {
-    CREATURE = 'CREATURE',
-    LAND = 'LAND',
-    INSTANT = 'INSTANT',
-    SORCERY = 'SORCERY',
-    ENCHANTMENT = 'ENCHANTMENT',
-    PLANESWALKER = 'PLANESWALKER',
-    ARTIFACT = 'ARTIFACT',
+    artifact = 'artifact',
+    creature = 'creature',
+    enchantment = 'enchantment',
+    instant = 'instant',
+    land = 'land',
+    planeswalker = 'planeswalker',
+    sorcery = 'sorcery',
+}
+
+export enum CategoryType {
+    CARD = 'CARD',
+    DECK = 'DECK',
 }
 
 export enum Color {
-    WHITE = 'White',
-    BLUE = 'Blue',
-    BLACK = 'Black',
-    RED = 'Red',
-    GREEN = 'Green',
-    COLORLESS = 'Colorless',
+    C = 'C',
+    B = 'B',
+    G = 'G',
+    R = 'R',
+    U = 'U',
+    W = 'W',
 }
 
 export type ImageUris = {
     __typename?: 'ImageUris'
-    small: Scalars['String']
-    normal: Scalars['String']
+    art_crop: Scalars['String']
+    border_crop: Scalars['String']
     large: Scalars['String']
+    normal: Scalars['String']
     png: Scalars['String']
-    artCrop: Scalars['String']
-    borderCrop: Scalars['String']
+    small: Scalars['String']
 }
 
 export enum Layout {
-    ADVENTURE = 'Adventure',
-    CLASS = 'Class',
-    MODALDFC = 'ModalDfc',
-    NORMAL = 'Normal',
-    SAGA = 'Saga',
-    SPLIT = 'Split',
-    TRANSFORM = 'Transform',
+    adventure = 'adventure',
+    class = 'class',
+    modal_dfc = 'modal_dfc',
+    normal = 'normal',
+    saga = 'saga',
+    split = 'split',
+    transform = 'transform',
 }
 
 export type Legalities = {
@@ -76,104 +81,114 @@ export type Legalities = {
 }
 
 export enum Legality {
-    BANNED = 'Banned',
-    LEGAL = 'Legal',
-    NOTLEGAL = 'NotLegal',
-    RESTRICTED = 'Restricted',
+    banned = 'banned',
+    legal = 'legal',
+    not_legal = 'not_legal',
+    restricted = 'restricted',
 }
 
 export type MTGACard = {
     __typename?: 'MTGACard'
-    cardFaces?: Maybe<Array<CardFace>>
+    card_faces?: Maybe<Array<CardFace>>
     cmc: Scalars['Int']
-    colorIdentity: Array<Color>
+    color_identity: Array<Color>
     colors?: Maybe<Array<Color>>
-    flavorText?: Maybe<Scalars['String']>
+    flavor_text?: Maybe<Scalars['String']>
     id: Scalars['ID']
-    imageUris?: Maybe<ImageUris>
+    image_uris?: Maybe<ImageUris>
     layout: Layout
     legalities: Legalities
     loyalty?: Maybe<Scalars['String']>
-    manaCost?: Maybe<Scalars['String']>
+    mana_cost?: Maybe<Scalars['String']>
     name: Scalars['String']
-    oracleText?: Maybe<Scalars['String']>
+    oracle_text?: Maybe<Scalars['String']>
     power?: Maybe<Scalars['String']>
-    producedMana?: Maybe<Array<Color>>
+    produced_mana?: Maybe<Array<Color>>
     rarity: Rarity
-    releasedAt: Scalars['Time']
-    rulingsURI: Scalars['String']
-    scryfallURI: Scalars['String']
+    released_at: Scalars['String']
+    rulings_uri: Scalars['String']
+    scryfall_uri: Scalars['String']
     set: Set
-    setName: Scalars['String']
-    setURI: Scalars['String']
+    set_name: Scalars['String']
+    set_uri: Scalars['String']
     toughness?: Maybe<Scalars['String']>
-    typeLine: Scalars['String']
+    type_line: Scalars['String']
 }
 
 export type MTGACard_User = {
     __typename?: 'MTGACard_User'
     card: MTGACard
-    userRating: Scalars['Int']
     userCardTags: Array<UserTag>
     userDeckTags: Array<UserTag>
+    userRating: Scalars['Int']
+}
+
+export type Query = {
+    __typename?: 'Query'
+    getCards: Array<MTGACard>
 }
 
 export enum Rarity {
-    COMMON = 'Common',
-    UNCOMMON = 'Uncommon',
-    RARE = 'Rare',
-    MYTHIC = 'Mythic',
+    common = 'common',
+    uncommon = 'uncommon',
+    rare = 'rare',
+    mythic = 'mythic',
 }
 
 export enum Set {
-    AFR = 'Afr',
-    AJMP = 'Ajmp',
-    AKR = 'Akr',
-    ANB = 'Anb',
-    DOM = 'DOM',
-    ELD = 'Eld',
-    G18 = 'G18',
-    GRN = 'Grn',
-    HA1 = 'Ha1',
-    HA2 = 'Ha2',
-    HA3 = 'Ha3',
-    HA4 = 'Ha4',
-    HA5 = 'Ha5',
-    IKO = 'Iko',
-    J21 = 'J21',
-    JMP = 'Jmp',
-    KHM = 'Khm',
-    KLR = 'Klr',
-    M19 = 'M19',
-    M20 = 'M20',
-    M21 = 'M21',
-    MID = 'Mid',
-    NEO = 'Neo',
-    OANA = 'Oana',
-    PANA = 'Pana',
-    RIX = 'Rix',
-    RNA = 'Rna',
-    SNC = 'Snc',
-    STA = 'Sta',
-    STX = 'Stx',
-    THB = 'Thb',
-    VOW = 'Vow',
-    WAR = 'War',
-    XLN = 'Xln',
-    YMID = 'Ymid',
-    YNEO = 'Yneo',
-    ZNR = 'Znr',
+    afr = 'afr',
+    ajmp = 'ajmp',
+    akr = 'akr',
+    anb = 'anb',
+    dom = 'dom',
+    eld = 'eld',
+    g18 = 'g18',
+    grn = 'grn',
+    ha1 = 'ha1',
+    ha2 = 'ha2',
+    ha3 = 'ha3',
+    ha4 = 'ha4',
+    ha5 = 'ha5',
+    iko = 'iko',
+    j21 = 'j21',
+    jmp = 'jmp',
+    khm = 'khm',
+    klr = 'klr',
+    m19 = 'm19',
+    m20 = 'm20',
+    m21 = 'm21',
+    mid = 'mid',
+    neo = 'neo',
+    oana = 'oana',
+    pana = 'pana',
+    rix = 'rix',
+    rna = 'rna',
+    snc = 'snc',
+    sta = 'sta',
+    stx = 'stx',
+    thb = 'thb',
+    vow = 'vow',
+    war = 'war',
+    xln = 'xln',
+    ymid = 'ymid',
+    yneo = 'yneo',
+    znr = 'znr',
 }
 
-export type Tag = {
-    __typename?: 'Tag'
-    id: Scalars['ID']
-    mame: Scalars['String']
+export type TagInput = {
+    categoryType: CategoryType
     colors: Array<Color>
+    comment: Scalars['String']
+    extra: Scalars['String']
+    name: Scalars['String']
 }
 
 export type UserTag = {
     __typename?: 'UserTag'
-    tag: Tag
+    categoryType: CategoryType
+    colors: Array<Color>
     comment?: Maybe<Scalars['String']>
+    extra: Scalars['String']
+    id: Scalars['ID']
+    type: Scalars['String']
 }

@@ -16,27 +16,44 @@ export interface CatalogueFilterType {
     expansions: Record<Set, TernaryBoolean>
 }
 
+export enum SortEnum {
+    NAME = 'name',
+    CMC = 'cmc',
+    RARITY = 'rarity',
+    COLOR = 'color',
+    TYPE = 'type',
+}
+
+export enum SortDirection {
+    ASC = 'asc',
+    DESC = 'desc',
+}
+
 export interface CatalogueState {
     // modals: Record<DECK_EDITOR_MODALS, boolean>
     filter: CatalogueFilterType
+    sort: {
+        sortBy: SortEnum
+        sortDirection: SortDirection
+    }
     zoom: 'IN' | 'OUT'
 }
 
 export const initialCatalogueState: CatalogueState = {
     filter: {
         color: {
-            Black: 0,
-            Blue: 0,
-            Green: 0,
-            Red: 0,
-            White: 0,
-            Colorless: 0,
+            B: 0,
+            C: 0,
+            G: 0,
+            R: 0,
+            U: 0,
+            W: 0,
         },
         rarity: {
-            Common: 0,
-            Uncommon: 0,
-            Rare: 0,
-            Mythic: 0,
+            common: 0,
+            uncommon: 0,
+            rare: 0,
+            mythic: 0,
         },
         searchString: '',
         multiColor: 0,
@@ -54,22 +71,22 @@ export const initialCatalogueState: CatalogueState = {
             infinite: 0,
         },
         cardTypes: {
-            ARTIFACT: 0,
-            CREATURE: 0,
-            ENCHANTMENT: 0,
-            INSTANT: 0,
-            LAND: 0,
-            PLANESWALKER: 0,
-            SORCERY: 0,
+            artifact: 0,
+            creature: 0,
+            enchantment: 0,
+            instant: 0,
+            land: 0,
+            planeswalker: 0,
+            sorcery: 0,
         },
         subtype: {
-            ARTIFACT: {},
-            CREATURE: {},
-            ENCHANTMENT: {},
-            INSTANT: {},
-            LAND: {},
-            PLANESWALKER: {},
-            SORCERY: {},
+            artifact: {},
+            creature: {},
+            enchantment: {},
+            instant: {},
+            land: {},
+            planeswalker: {},
+            sorcery: {},
         },
         categories: [],
         expansions: (() => {
@@ -81,6 +98,10 @@ export const initialCatalogueState: CatalogueState = {
         })(),
     },
     zoom: 'IN',
+    sort: {
+        sortBy: SortEnum.NAME,
+        sortDirection: SortDirection.ASC,
+    },
 }
 
 function CatalogueStateReducer(
@@ -102,6 +123,11 @@ function CatalogueStateReducer(
             return {
                 ...currentState,
                 zoom: action.payload,
+            }
+        case CatalogueStateAction.SET_SORT:
+            return {
+                ...currentState,
+                sort: { ...currentState.sort, ...action.payload },
             }
         default:
             return currentState
