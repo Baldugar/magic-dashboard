@@ -8,20 +8,28 @@ export interface CMCSelectorProps {
     iconSize?: number
     selected: { [key in CMCFilter]: TernaryBoolean }
     setSelected: (color: CMCFilter) => void
+    setSelectedPrev: (color: CMCFilter) => void
 }
 
 const CMCSelector = (props: CMCSelectorProps): JSX.Element => {
-    const { iconSize, selected, setSelected } = props
+    const { iconSize, selected, setSelected, setSelectedPrev } = props
     const CMC: CMCFilter[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'infinite']
 
     return (
         <>
             {Object.values(CMC).map((c) => (
-                <Box key={c}>
+                <Box key={c} display={'flex'} alignItems={'center'}>
                     <TernaryToggle
                         value={selected[c]}
                         type={'icon'}
-                        iconButtonProps={{ size: 'small', onClick: () => setSelected(c) }}
+                        iconButtonProps={{
+                            size: 'small',
+                            onClick: () => setSelected(c),
+                            onContextMenu: (e) => {
+                                e.preventDefault()
+                                setSelectedPrev(c)
+                            },
+                        }}
                         imgProps={{
                             src: `/img/cmc/${c}.svg`,
                             width: iconSize ?? 40,

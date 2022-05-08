@@ -1,8 +1,6 @@
 import { Skeleton } from '@mui/material'
 import React, { MouseEventHandler, useState } from 'react'
-import { CARD_SIZE_VALUES } from 'utils/constants'
-import { CARD_IMAGE_SIZE } from 'utils/types'
-
+import { CARD_IMAGE_SIZE, CARD_SIZE_VALUES } from 'utils/constants'
 export interface ImageWithSkeletonProps {
     img: string
     scale?: number

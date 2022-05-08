@@ -1,22 +1,21 @@
 import { Chip, CssBaseline, IconButton, ThemeProvider } from '@mui/material'
-import DeckEditor from 'pages/DeckEditor'
-import LoginView from 'pages/LoginView'
 import React, { useCallback } from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { HashRouter, Redirect, Route, Switch, useHistory } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import store, { AppState } from 'store/store'
 import { ModifiedTheme } from 'utils/theme'
-import DeckSelector from 'pages/DeckSelector'
 import { Box } from '@mui/system'
 import Catalogue from 'pages/Catalogue'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { Dispatch } from 'redux'
 import GeneralStateActions, { GeneralStateAction } from 'store/GeneralState/GeneralState.actions'
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
+import Login from 'pages/Login'
 
 const BottomNavBar = (props: { navLinks: { path: string; label: string; component: JSX.Element }[] }) => {
     const { navLinks } = props
-    const history = useHistory()
+    const navigate = useNavigate()
     const {
         generalState: { bottomBarOpened: open },
     } = useSelector((appState: AppState) => ({
@@ -29,6 +28,7 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
         },
         [dispatch],
     )
+
     return (
         <Box
             position={'fixed'}
@@ -75,7 +75,7 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
             </Box>
             {navLinks.map((link) => (
                 <Box key={link.path}>
-                    <Chip label={link.label} onClick={() => history.push(link.path)} />
+                    <Chip label={link.label} onClick={() => navigate(link.path)} />
                 </Box>
             ))}
         </Box>
@@ -84,37 +84,42 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
 
 function App(): JSX.Element {
     const navLinks: { path: string; label: string; component: JSX.Element }[] = [
-        { path: '/', label: 'Login', component: <LoginView /> },
-        { path: '/deck-selector', label: 'Deck Selector', component: <DeckSelector /> },
-        { path: '/deck-editor', label: 'Deck Editor', component: <DeckEditor /> },
         { path: '/catalogue', label: 'Catalogue', component: <Catalogue /> },
+        { path: '/login', label: 'Login', component: <Login /> },
     ]
 
+    const graphQLServerURI = 'http://localhost:8000'
+
+    const apolloClient = new ApolloClient({
+        cache: new InMemoryCache(),
+        uri: graphQLServerURI,
+    })
+
     return (
-        <HashRouter>
-            <Auth0Provider
-                domain="dev-3h8tu4ep.eu.auth0.com"
-                clientId="y4HQ47fZ4u5m7ExMFLwH3KGRwt8fTeRe"
-                redirectUri={window.location.origin}
-                audience="https://dev-3h8tu4ep.eu.auth0.com/api/v2/"
-                scope="read:current_user update:current_user_metadata"
-            >
-                <Provider store={store}>
-                    <ThemeProvider theme={ModifiedTheme}>
-                        <Switch>
-                            {navLinks.map((link) => (
-                                <Route key={link.path} path={link.path} exact={true} render={() => link.component} />
-                            ))}
-                            <Route>
-                                <Redirect to={'/'} />
-                            </Route>
-                        </Switch>
-                        <BottomNavBar navLinks={navLinks} />
-                        <CssBaseline />
-                    </ThemeProvider>
-                </Provider>
-            </Auth0Provider>
-        </HashRouter>
+        <ApolloProvider client={apolloClient}>
+            <HashRouter>
+                <Auth0Provider
+                    domain="dev-3h8tu4ep.eu.auth0.com"
+                    clientId="y4HQ47fZ4u5m7ExMFLwH3KGRwt8fTeRe"
+                    redirectUri={window.location.origin}
+                    audience="https://dev-3h8tu4ep.eu.auth0.com/api/v2/"
+                    scope="read:current_user update:current_user_metadata"
+                >
+                    <Provider store={store}>
+                        <ThemeProvider theme={ModifiedTheme}>
+                            <Routes>
+                                {navLinks.map((link) => (
+                                    <Route key={link.path} path={link.path} element={link.component} />
+                                ))}
+                                <Route path={'/'} element={<Navigate to={'/login'} />} />
+                            </Routes>
+                            <BottomNavBar navLinks={navLinks} />
+                            <CssBaseline />
+                        </ThemeProvider>
+                    </Provider>
+                </Auth0Provider>
+            </HashRouter>
+        </ApolloProvider>
     )
 }
 

@@ -1,0 +1,10 @@
+schema: ../graphql/schema.graphqls
+generates:
+  ./src/graphql/types.ts:
+    plugins:
+      - typescript
+    config:
+      namingConvention: keep
+      sort: false
+      scalars:
+        Time: Date

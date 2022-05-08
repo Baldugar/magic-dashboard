@@ -8,6 +8,10 @@ export const nextTB = (current: TernaryBoolean | undefined): TernaryBoolean => {
     return current ? (current + 1) % 3 : TernaryBoolean.TRUE
 }
 
+export const prevTB = (current: TernaryBoolean | undefined): TernaryBoolean => {
+    return current ? (current + 2) % 3 : TernaryBoolean.FALSE
+}
+
 export const isUnsetTB = (current: TernaryBoolean | undefined): boolean => {
     return current === undefined && current === TernaryBoolean.UNSET
 }

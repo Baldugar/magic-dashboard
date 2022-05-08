@@ -1,9 +1,9 @@
 import { Box } from '@mui/system'
 import HoverMouseComponent from 'components/HoverMouseComponent'
 import ImageWithSkeleton from 'components/ImageWithSkeleton'
+import { MTGACard } from 'graphql/types'
 import React, { MouseEventHandler, useState } from 'react'
-import { CARD_SIZE_VALUES } from 'utils/constants'
-import { CARD_IMAGE_SIZE, MTGACard } from 'utils/types'
+import { CARD_IMAGE_SIZE, CARD_SIZE_VALUES } from 'utils/constants'
 
 export interface CardWithHoverProps {
     card: MTGACard | undefined

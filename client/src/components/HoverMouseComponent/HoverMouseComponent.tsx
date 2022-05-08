@@ -24,7 +24,7 @@ const HoverMouseComponent = (props: HoverMouseComponentProps): JSX.Element | nul
     })
 
     const modDefaultValue = 10
-    const scaleDefaultValue = 0.7
+    const scaleDefaultValue = 0.66
 
     const handleMouseMove = (e: MouseEvent): void => {
         if (visible) {
@@ -32,19 +32,19 @@ const HoverMouseComponent = (props: HoverMouseComponentProps): JSX.Element | nul
                 bottom: boolean
                 right: boolean
             } = closeToEdge
-            if (document.body.clientWidth < e.clientX + modDefaultValue + zoomCardWidth * scaleDefaultValue) {
+            if (document.body.clientWidth < 5 + e.clientX + modDefaultValue + zoomCardWidth * scaleDefaultValue) {
                 calculatedCloseToEdge.right = true
             } else {
                 calculatedCloseToEdge.right = false
             }
-            if (document.body.clientHeight < e.clientY + modDefaultValue + zoomCardHeight * scaleDefaultValue) {
+            if (document.body.clientHeight < 5 + e.clientY + modDefaultValue + zoomCardHeight * scaleDefaultValue) {
                 calculatedCloseToEdge.bottom = true
             } else {
                 calculatedCloseToEdge.bottom = false
             }
             setCloseToEdge(calculatedCloseToEdge)
-            setX(e.clientX)
-            setY(e.clientY)
+            setX(e.pageX)
+            setY(e.pageY)
         }
     }
 

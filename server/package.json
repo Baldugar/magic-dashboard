@@ -1,0 +1,54 @@
+{
+  "name": "ts-node-template",
+  "version": "1.0.0",
+  "description": "This repo is a boilerplate repo for creating typescript projects in a node environment. After following along the instructions you have the basic functionality for running a typescript project with ts-node included to your project-folder.",
+  "main": "index.js",
+  "scripts": {
+    "generate": "graphql-codegen",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thomas1664/ts-node-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thomas1664/ts-node-template/issues"
+  },
+  "homepage": "https://github.com/Thomas1664/ts-node-template#readme",
+  "dependencies": {
+    "@graphql-tools/graphql-file-loader": "^7.3.3",
+    "@graphql-tools/load": "^7.4.1",
+    "@types/md5": "^2.3.2",
+    "@types/node": "^16.11.7",
+    "@types/uuid": "^8.3.4",
+    "apollo-server": "^3.5.0",
+    "arangojs": "^7.7.0",
+    "axios": "^0.27.2",
+    "date-fns": "^2.28.0",
+    "graphql": "^15.7.2",
+    "graphql-scalars": "^1.13.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^2.0.5",
+    "lodash": "^4.17.21",
+    "md5": "^2.3.0",
+    "mongodb": "^4.1.4",
+    "mongoose": "^6.0.12",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^2.2.2",
+    "@graphql-codegen/typescript": "^2.3.1",
+    "@graphql-tools/schema": "^8.3.1",
+    "@types/arangodb": "^3.5.13",
+    "@types/lodash": "^4.14.182",
+    "@types/nodemon": "^1.19.1",
+    "nodemon": "^2.0.15"
+  }
+}

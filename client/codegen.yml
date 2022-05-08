@@ -1,11 +1,10 @@
-schema: ../graphql/*.graphqls
+schema: ../graphql/schema.graphqls
 generates:
     ./src/graphql/types.ts:
         plugins:
             - typescript
         config:
-            namingConvention:
-                enumValues: upper-case#upperCase
+            sort: false
+            namingConvention: keep
             scalars:
                 Time: Date
-                SettingsMap: 'Record<Settings, boolean>'

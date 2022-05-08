@@ -1,30 +1,36 @@
 import { Box } from '@mui/system'
+import { CardType } from 'graphql/types'
 import TernaryToggle from 'pages/Catalogue/components/TernaryToggle'
 import React from 'react'
 import { TernaryBoolean } from 'utils/ternaryBoolean'
-import { CARD_TYPES } from 'utils/types'
 
-export interface TypeSelectorProps {
-    selected: { [key in CARD_TYPES]: TernaryBoolean }
-    setSelected: (cardType: CARD_TYPES) => void
+export interface RaritySelectorProps {
+    selected: { [key in CardType]: TernaryBoolean }
+    setSelected: (rarity: CardType) => void
+    setSelectedPrev: (rarity: CardType) => void
+    iconSize?: number
 }
 
-const TypeSelector = (props: TypeSelectorProps): JSX.Element => {
-    const { selected, setSelected } = props
+const RaritySelector = (props: RaritySelectorProps): JSX.Element => {
+    const { selected, setSelected, setSelectedPrev, iconSize } = props
     return (
         <>
-            {Object.values(CARD_TYPES).map((t) => {
+            {Object.values(CardType).map((ct) => {
                 return (
-                    <Box key={t}>
+                    <Box key={ct} display={'flex'} alignItems={'center'}>
                         <TernaryToggle
-                            value={selected[t]}
-                            type={'checkbox'}
-                            labelProps={{
-                                label: t,
-                                labelPlacement: 'start',
+                            value={selected[ct]}
+                            type={'icon'}
+                            iconButtonProps={{
+                                size: 'small',
+                                onClick: () => setSelected(ct),
+                                onContextMenu: () => setSelectedPrev(ct),
                             }}
-                            checkboxProps={{
-                                onChange: () => setSelected(t),
+                            imgProps={{
+                                src: `/img/type/${ct}.png`,
+                                width: iconSize ?? 40,
+                                height: iconSize ?? 40,
+                                style: { opacity: selected[ct] ? 1 : 0.3, transition: 'opacity 250ms' },
                             }}
                         />
                     </Box>
@@ -34,4 +40,4 @@ const TypeSelector = (props: TypeSelectorProps): JSX.Element => {
     )
 }
 
-export default TypeSelector
+export default RaritySelector

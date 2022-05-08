@@ -1,4 +1,4 @@
-import { ApiCard } from 'graphql/types'
+import { MTGACard } from 'graphql/types'
 
 const BASE_URL = 'https://api.scryfall.com/'
 
@@ -27,6 +27,6 @@ export const sendAPIRequest = async <T>(func: API_FUNCTION, method: 'GET' | 'POS
     })
 }
 
-export const sendCardQuery = async (query: string): Promise<ApiCard[]> => {
-    return (await sendAPIRequest<{ data: ApiCard[] }>({ type: API_CALL_TYPE.CARDS, query }, 'GET')).data
+export const sendCardQuery = async (query: string): Promise<MTGACard[]> => {
+    return (await sendAPIRequest<{ data: MTGACard[] }>({ type: API_CALL_TYPE.CARDS, query }, 'GET')).data
 }
