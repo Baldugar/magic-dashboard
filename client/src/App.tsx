@@ -11,6 +11,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { Dispatch } from 'redux'
 import GeneralStateActions, { GeneralStateAction } from 'store/GeneralState/GeneralState.actions'
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
+import Login from 'pages/Login'
 
 const BottomNavBar = (props: { navLinks: { path: string; label: string; component: JSX.Element }[] }) => {
     const { navLinks } = props
@@ -84,6 +85,7 @@ const BottomNavBar = (props: { navLinks: { path: string; label: string; componen
 function App(): JSX.Element {
     const navLinks: { path: string; label: string; component: JSX.Element }[] = [
         { path: '/catalogue', label: 'Catalogue', component: <Catalogue /> },
+        { path: '/login', label: 'Login', component: <Login /> },
     ]
 
     const graphQLServerURI = 'http://localhost:8000'
@@ -109,7 +111,7 @@ function App(): JSX.Element {
                                 {navLinks.map((link) => (
                                     <Route key={link.path} path={link.path} element={link.component} />
                                 ))}
-                                <Route path={'/'} element={<Navigate to={'/catalogue'} />} />
+                                <Route path={'/'} element={<Navigate to={'/login'} />} />
                             </Routes>
                             <BottomNavBar navLinks={navLinks} />
                             <CssBaseline />

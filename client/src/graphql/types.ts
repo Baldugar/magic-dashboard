@@ -51,6 +51,16 @@ export enum Color {
     W = 'W',
 }
 
+export type GetTagsReturn = {
+    __typename?: 'GetTagsReturn'
+    cardTags: Array<Tag>
+    deckTags: Array<Tag>
+}
+
+export type GetUserCardsParams = {
+    userID: Scalars['ID']
+}
+
 export type ImageUris = {
     __typename?: 'ImageUris'
     art_crop: Scalars['String']
@@ -87,6 +97,11 @@ export enum Legality {
     restricted = 'restricted',
 }
 
+export type LoginInput = {
+    password: Scalars['String']
+    username: Scalars['String']
+}
+
 export type MTGACard = {
     __typename?: 'MTGACard'
     card_faces?: Maybe<Array<CardFace>>
@@ -118,14 +133,55 @@ export type MTGACard = {
 export type MTGACard_User = {
     __typename?: 'MTGACard_User'
     card: MTGACard
+    comment: Scalars['String']
+    rating: Scalars['Int']
     userCardTags: Array<UserTag>
     userDeckTags: Array<UserTag>
-    userRating: Scalars['Int']
+}
+
+export type Mutation = {
+    __typename?: 'Mutation'
+    addTag: Tag
+    addTagLink: MTGACard_User
+    login?: Maybe<User>
+    removeTagLink: MTGACard_User
+    updateTagLink: MTGACard_User
+    updateUserCardMeta: MTGACard_User
+}
+
+export type MutationaddTagArgs = {
+    tag: TagInput
+}
+
+export type MutationaddTagLinkArgs = {
+    input: TagLinkInput
+}
+
+export type MutationloginArgs = {
+    input: LoginInput
+}
+
+export type MutationremoveTagLinkArgs = {
+    input: RemoveTagLinkInput
+}
+
+export type MutationupdateTagLinkArgs = {
+    input: TagLinkInput
+}
+
+export type MutationupdateUserCardMetaArgs = {
+    input: UpdateUserCardMetaInput
 }
 
 export type Query = {
     __typename?: 'Query'
     getCards: Array<MTGACard>
+    getTags: GetTagsReturn
+    getUserCards: Array<MTGACard_User>
+}
+
+export type QuerygetUserCardsArgs = {
+    input: GetUserCardsParams
 }
 
 export enum Rarity {
@@ -133,6 +189,13 @@ export enum Rarity {
     uncommon = 'uncommon',
     rare = 'rare',
     mythic = 'mythic',
+}
+
+export type RemoveTagLinkInput = {
+    cardID: Scalars['ID']
+    categoryType: CategoryType
+    tagID: Scalars['ID']
+    userID: Scalars['ID']
 }
 
 export enum Set {
@@ -175,20 +238,47 @@ export enum Set {
     znr = 'znr',
 }
 
+export type Tag = {
+    __typename?: 'Tag'
+    categoryType: CategoryType
+    colors: Array<Color>
+    extra: Scalars['String']
+    id: Scalars['ID']
+    type: Scalars['String']
+}
+
 export type TagInput = {
     categoryType: CategoryType
     colors: Array<Color>
-    comment: Scalars['String']
     extra: Scalars['String']
+    name: Scalars['String']
+}
+
+export type TagLinkInput = {
+    cardID: Scalars['ID']
+    categoryType: CategoryType
+    comment: Scalars['String']
+    rating: Scalars['Int']
+    tagID: Scalars['ID']
+    userID: Scalars['ID']
+}
+
+export type UpdateUserCardMetaInput = {
+    cardID: Scalars['ID']
+    comment: Scalars['String']
+    rating: Scalars['Int']
+    userID: Scalars['ID']
+}
+
+export type User = {
+    __typename?: 'User'
+    id: Scalars['ID']
     name: Scalars['String']
 }
 
 export type UserTag = {
     __typename?: 'UserTag'
-    categoryType: CategoryType
-    colors: Array<Color>
-    comment?: Maybe<Scalars['String']>
-    extra: Scalars['String']
-    id: Scalars['ID']
-    type: Scalars['String']
+    comment: Scalars['String']
+    rating: Scalars['Int']
+    tag: Tag
 }

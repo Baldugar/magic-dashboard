@@ -8,7 +8,7 @@ import {
   Legalities,
   Rarity,
   Set,
-} from "./graphql/types";
+} from "../graphql/types";
 
 export interface MTGACard_DB {
   __typename?: "MTGACard";
@@ -37,4 +37,17 @@ export interface MTGACard_DB {
   set_uri: Scalars["String"];
   toughness?: Maybe<Scalars["String"]>;
   type_line: Scalars["String"];
+}
+export interface TagCardLink {
+  _from: Scalars["ID"]; // tag._id
+  _to: Scalars["ID"]; // UserCardLink._id
+  rating: number;
+  comment: string;
+}
+
+export interface UserCardLink {
+  _from: Scalars["ID"]; // user._id
+  _to: Scalars["ID"]; // card._id
+  rating: number;
+  comment: string;
 }

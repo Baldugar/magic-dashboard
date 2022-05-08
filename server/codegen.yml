@@ -1,9 +1,10 @@
-schema: ../graphql/card_schema.graphqls
+schema: ../graphql/schema.graphqls
 generates:
   ./src/graphql/types.ts:
     plugins:
       - typescript
     config:
       namingConvention: keep
+      sort: false
       scalars:
         Time: Date

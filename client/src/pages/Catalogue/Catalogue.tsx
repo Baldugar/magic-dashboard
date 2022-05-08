@@ -1,11 +1,16 @@
-import { NavigateBefore, NavigateNext } from '@mui/icons-material'
+import { ExpandMore, NavigateBefore, NavigateNext } from '@mui/icons-material'
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Button,
+    ButtonBase,
     ClickAwayListener,
     FormControl,
     IconButton,
     InputLabel,
     MenuItem,
+    Modal,
     Popper,
     Select,
     Typography,
@@ -14,18 +19,27 @@ import { Box } from '@mui/system'
 import CardWithHover from 'components/CardWithHover'
 import { cloneDeep } from 'lodash'
 import CatalogueFilter from 'pages/Catalogue/components/CatalogueFilter'
-import { useCatalogueDatabaseState } from 'pages/Catalogue/useCatalogueDatabaseState'
+import { useCatalogueState } from 'pages/Catalogue/useCatalogueState'
 import { MouseEvent, useState } from 'react'
 import { initialCatalogueState, SortDirection, SortEnum } from 'store/CatalogueState/CatalogueState.reducer'
-import { PAGE_SIZE } from 'utils/constants'
-import { nextTB, TernaryBoolean } from 'utils/ternaryBoolean'
-import { Color, Set } from 'graphql/types'
+import { isNegativeTB, isNotUnsetTB, isPositiveTB, nextTB, prevTB, TernaryBoolean } from 'utils/ternaryBoolean'
+import { CategoryType, Color, Set } from 'graphql/types'
 import TernaryToggle from 'pages/Catalogue/components/TernaryToggle'
 import { NewCategoryInput } from 'pages/Catalogue/components/NewCategoryInput/NewCategoryInput'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import CardModal from 'pages/Catalogue/components/CardModal'
 
 const Catalogue = (): JSX.Element => {
+    const [search] = useSearchParams()
+    const userID = search.get('userID') || ''
+    const navigate = useNavigate()
+
+    if (userID === '') {
+        navigate('/login', { replace: true })
+    }
+
+    console.log('USER ID', userID)
     const {
-        allCards,
         done,
         cardsToShow,
         page,
@@ -40,26 +54,38 @@ const Catalogue = (): JSX.Element => {
         changeSortDirection,
         sortBy,
         sortDirection,
-    } = useCatalogueDatabaseState()
+        cardTags,
+        deckTags,
+        handleAddTag,
+        handleOnTagClick,
+        handleOnTagContextMenu,
+        openCardModal,
+        selectedCard,
+        setSelectedCard,
+        handleAddTagLink,
+        handleUpdateUserCardMeta,
+        handleUpdateTagLink,
+        handleRemoveTagLink,
+    } = useCatalogueState(userID)
 
-    const [anchorEl, setAnchorEl] = useState<Element | null>(null)
-    const [subAnchorEl, setSubAnchorEl] = useState<Element | null>(null)
+    const [categoryMenuAnchorEl, setCategoryMenuAnchorEl] = useState<Element | null>(null)
+    const [newCategoryAnchorEl, setNewCategoryAnchorEl] = useState<Element | null>(null)
 
-    const open = Boolean(anchorEl)
-    const subOpen = Boolean(subAnchorEl)
-    const openCategoryMenu = (e: MouseEvent<HTMLButtonElement>) => setAnchorEl(e.currentTarget)
+    const categoryMenuOpen = Boolean(categoryMenuAnchorEl)
+    const newCategoryMenuOpen = Boolean(newCategoryAnchorEl)
+    const openCategoryMenu = (e: MouseEvent<HTMLButtonElement>) => setCategoryMenuAnchorEl(e.currentTarget)
     const openNewCategoryMenu = (e: MouseEvent<HTMLLIElement>) => {
-        if (subOpen) {
-            setSubAnchorEl(null)
+        if (newCategoryMenuOpen) {
+            setNewCategoryAnchorEl(null)
         } else {
-            setSubAnchorEl(e.currentTarget)
+            setNewCategoryAnchorEl(e.currentTarget)
         }
     }
     const closeCategoryMenu = () => {
-        setAnchorEl(null)
-        setSubAnchorEl(null)
+        setCategoryMenuAnchorEl(null)
+        setNewCategoryAnchorEl(null)
     }
-    const closeNewCategoryMenu = () => setSubAnchorEl(null)
+    const closeNewCategoryMenu = () => setNewCategoryAnchorEl(null)
 
     if (!done) {
         return <div>Loading...</div>
@@ -83,29 +109,146 @@ const Catalogue = (): JSX.Element => {
                 justifyContent={'space-between'}
             >
                 <Box display={'flex'} alignItems={'center'}>
-                    <Button onClick={openCategoryMenu} variant={'contained'}>
+                    <Button
+                        onClick={openCategoryMenu}
+                        variant={'contained'}
+                        color={
+                            Object.values(filter.categories).filter((c) => isNotUnsetTB(c)).length > 0 ||
+                            isNotUnsetTB(filter.cardsWithoutCategory)
+                                ? 'secondary'
+                                : 'primary'
+                        }
+                    >
                         Categories
                     </Button>
-                    <Popper anchorEl={anchorEl} open={open}>
+                    <Popper anchorEl={categoryMenuAnchorEl} open={categoryMenuOpen}>
                         <ClickAwayListener onClickAway={closeCategoryMenu}>
-                            <div>
+                            <div style={{ overflow: 'auto', maxHeight: '90vh', width: '400px' }}>
                                 <MenuItem onClick={openNewCategoryMenu} style={{ backgroundColor: 'white' }}>
                                     <Typography>New Category</Typography>
                                 </MenuItem>
-                                <Popper placement={'right'} anchorEl={subAnchorEl} open={subOpen}>
+                                <MenuItem
+                                    style={{ backgroundColor: 'white' }}
+                                    onContextMenu={() => {
+                                        const newFilter = cloneDeep(filter)
+                                        newFilter.cardsWithoutCategory = prevTB(newFilter.cardsWithoutCategory)
+                                        setFilter(newFilter)
+                                    }}
+                                >
+                                    <TernaryToggle
+                                        type={'checkbox'}
+                                        value={filter.cardsWithoutCategory}
+                                        checkboxProps={{
+                                            checked: isPositiveTB(filter.cardsWithoutCategory),
+                                            indeterminate: isNegativeTB(filter.cardsWithoutCategory),
+                                            onChange: () => {
+                                                const newFilter = cloneDeep(filter)
+                                                newFilter.cardsWithoutCategory = nextTB(newFilter.cardsWithoutCategory)
+                                                setFilter(newFilter)
+                                            },
+                                        }}
+                                        labelProps={{
+                                            label: 'Cards without category',
+                                        }}
+                                    />
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        const newFilter = { ...filter }
+                                        newFilter.cardsWithoutCategory = 0
+                                        const keys = Object.keys(newFilter.categories)
+                                        for (const key of keys) {
+                                            newFilter.categories[key] = 0
+                                        }
+                                        setFilter(newFilter)
+                                    }}
+                                    style={{ backgroundColor: 'white' }}
+                                >
+                                    <Typography>Clear Selected Categories</Typography>
+                                </MenuItem>
+                                <Accordion>
+                                    <AccordionSummary expandIcon={<ExpandMore />}>
+                                        <MenuItem style={{ backgroundColor: 'white' }}>
+                                            <Typography>Card Categories</Typography>
+                                        </MenuItem>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        {cardTags.length === 0 ? (
+                                            <Box>
+                                                <Typography>No Card Categories</Typography>
+                                            </Box>
+                                        ) : (
+                                            cardTags.map((tag) => (
+                                                <Box key={tag.id} style={{ backgroundColor: 'white' }}>
+                                                    <TernaryToggle
+                                                        type={'chip'}
+                                                        chipProps={{
+                                                            category: tag,
+                                                            onClick: () => {
+                                                                handleOnTagClick(tag)
+                                                            },
+                                                            onContextMenu: () => {
+                                                                handleOnTagContextMenu(tag)
+                                                            },
+                                                        }}
+                                                        value={filter.categories[tag.id]}
+                                                    />
+                                                </Box>
+                                            ))
+                                        )}
+                                    </AccordionDetails>
+                                </Accordion>
+                                <Accordion>
+                                    <AccordionSummary expandIcon={<ExpandMore />}>
+                                        <MenuItem style={{ backgroundColor: 'white' }}>
+                                            <Typography>Deck Categories</Typography>
+                                        </MenuItem>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        {deckTags.length === 0 ? (
+                                            <Box>
+                                                <Typography>No Deck Categories</Typography>
+                                            </Box>
+                                        ) : (
+                                            deckTags.map((tag) => (
+                                                <Box key={tag.id} style={{ backgroundColor: 'white' }}>
+                                                    <TernaryToggle
+                                                        type={'chip'}
+                                                        chipProps={{
+                                                            category: tag,
+                                                            onClick: () => {
+                                                                handleOnTagClick(tag)
+                                                            },
+                                                            onContextMenu: () => {
+                                                                handleOnTagContextMenu(tag)
+                                                            },
+                                                        }}
+                                                        value={filter.categories[tag.id]}
+                                                    />
+                                                </Box>
+                                            ))
+                                        )}
+                                    </AccordionDetails>
+                                </Accordion>
+                                <Popper placement={'right'} anchorEl={newCategoryAnchorEl} open={newCategoryMenuOpen}>
                                     <ClickAwayListener onClickAway={closeNewCategoryMenu}>
                                         <div style={{ backgroundColor: 'white' }}>
                                             <NewCategoryInput
-                                                cardCategories={[]}
-                                                deckCategories={[]}
+                                                cardCategories={cardTags}
+                                                deckCategories={deckTags}
                                                 onSubmit={(
                                                     type: string,
                                                     extra: string,
-                                                    comment: string,
                                                     colors: Color[],
-                                                    categoryType: 'CARD' | 'DECK',
+                                                    categoryType: CategoryType,
                                                 ) => {
-                                                    console.log('Submit', type, extra, comment, colors, categoryType)
+                                                    handleAddTag({
+                                                        categoryType,
+                                                        colors,
+                                                        extra,
+                                                        name: type,
+                                                    })
+                                                    console.log('Submit', type, extra, colors, categoryType)
                                                     closeNewCategoryMenu()
                                                 }}
                                             />
@@ -230,11 +373,13 @@ const Catalogue = (): JSX.Element => {
                         {/* CARTAS */}
                         <Box
                             onWheel={(e) => {
-                                if (e.deltaY > 0 && !((page + 1) * PAGE_SIZE >= allCards.length)) {
-                                    nextPage()
-                                }
-                                if (e.deltaY < 0 && !(page === 0)) {
-                                    prevPage()
+                                if (selectedCard === null) {
+                                    if (e.deltaY > 0 && !disableNext) {
+                                        nextPage()
+                                    }
+                                    if (e.deltaY < 0 && !(page === 0)) {
+                                        prevPage()
+                                    }
                                 }
                             }}
                             id={'CardContainer'}
@@ -253,20 +398,22 @@ const Catalogue = (): JSX.Element => {
                                     <Box key={i + '_' + chunk.length} display={'flex'}>
                                         {chunk.map((card) => (
                                             <Box
-                                                key={card.id}
+                                                key={card.card.id}
                                                 // width={`${CARD_SIZE_VALUES[CARD_IMAGE_SIZE.SMALL].width * scale}px`}
                                                 // height={`${CARD_SIZE_VALUES[CARD_IMAGE_SIZE.SMALL].height * scale}px`}
                                             >
                                                 <CardWithHover
-                                                    // selected={selectedCard && selectedCard.id === card.id}
-                                                    // onClick={() => {
-                                                    //    setSelectedCardID(card.id)
-                                                    // }}
+                                                    selected={
+                                                        selectedCard !== null && selectedCard.card.id === card.card.id
+                                                    }
+                                                    onClick={() => {
+                                                        setSelectedCard(card)
+                                                    }}
                                                     // onContextMenu={(e) => {
                                                     //     e.preventDefault()
                                                     //     setSelectedCardID(card.id)
                                                     // }}
-                                                    card={card}
+                                                    card={card.card}
                                                     // scale={scale}
                                                 />
                                             </Box>
@@ -274,6 +421,167 @@ const Catalogue = (): JSX.Element => {
                                     </Box>
                                 )
                             })}
+                            <Modal
+                                open={openCardModal}
+                                onClose={() => {
+                                    setSelectedCard(null)
+                                }}
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    columnGap: '16px',
+                                }}
+                            >
+                                <>
+                                    {selectedCard && (
+                                        <ButtonBase
+                                            TouchRippleProps={{
+                                                style: {
+                                                    borderRadius: '30px',
+                                                },
+                                            }}
+                                            onClick={
+                                                cardsToShow
+                                                    .flat()
+                                                    .findIndex(
+                                                        (c) => selectedCard && c.card.id === selectedCard.card.id,
+                                                    ) === 0
+                                                    ? undefined
+                                                    : () =>
+                                                          setSelectedCard(
+                                                              cardsToShow.flat()[
+                                                                  cardsToShow
+                                                                      .flat()
+                                                                      .findIndex(
+                                                                          (c) =>
+                                                                              selectedCard &&
+                                                                              c.card.id === selectedCard.card.id,
+                                                                      ) - 1
+                                                              ],
+                                                          )
+                                            }
+                                        >
+                                            <Box
+                                                width={60}
+                                                height={60}
+                                                borderRadius={'30px'}
+                                                display={'flex'}
+                                                justifyContent={'center'}
+                                                alignItems={'center'}
+                                                bgcolor={'white'}
+                                                border={'1px solid black'}
+                                            >
+                                                <NavigateBefore />
+                                            </Box>
+                                        </ButtonBase>
+                                    )}
+                                    <CardModal
+                                        onTagRemove={(tag) => {
+                                            if (selectedCard) {
+                                                handleRemoveTagLink({
+                                                    cardID: selectedCard.card.id,
+                                                    tagID: tag.id,
+                                                    categoryType: tag.categoryType,
+                                                    userID,
+                                                })
+                                            }
+                                        }}
+                                        onTagUpdate={(tag, rating, comment) => {
+                                            if (selectedCard) {
+                                                handleUpdateTagLink({
+                                                    cardID: selectedCard.card.id,
+                                                    categoryType: tag.categoryType,
+                                                    tagID: tag.id,
+                                                    rating,
+                                                    comment,
+                                                    userID,
+                                                })
+                                            }
+                                        }}
+                                        onMetaUpdate={(rating, comment) => {
+                                            if (selectedCard) {
+                                                handleUpdateUserCardMeta({
+                                                    cardID: selectedCard.card.id,
+                                                    rating,
+                                                    comment,
+                                                    userID,
+                                                })
+                                            }
+                                        }}
+                                        onTagAddToCard={(tag, rating, comment) => {
+                                            if (selectedCard) {
+                                                handleAddTagLink({
+                                                    cardID: selectedCard.card.id,
+                                                    categoryType: tag.categoryType,
+                                                    comment,
+                                                    rating,
+                                                    tagID: tag.id,
+                                                    userID,
+                                                })
+                                            }
+                                        }}
+                                        cardTags={cardTags}
+                                        deckTags={deckTags}
+                                        onNewCategoryAdd={(
+                                            type: string,
+                                            extra: string,
+                                            colors: Color[],
+                                            categoryType: CategoryType,
+                                        ) => {
+                                            handleAddTag({
+                                                categoryType,
+                                                colors,
+                                                extra,
+                                                name: type,
+                                            })
+                                        }}
+                                        userCard={selectedCard}
+                                    />
+                                    {selectedCard && (
+                                        <ButtonBase
+                                            TouchRippleProps={{
+                                                style: {
+                                                    borderRadius: '30px',
+                                                },
+                                            }}
+                                            onClick={() =>
+                                                cardsToShow
+                                                    .flat()
+                                                    .findIndex(
+                                                        (c) => selectedCard && c.card.id === selectedCard.card.id,
+                                                    ) ===
+                                                cardsToShow.flat().length - 1
+                                                    ? undefined
+                                                    : setSelectedCard(
+                                                          cardsToShow.flat()[
+                                                              cardsToShow
+                                                                  .flat()
+                                                                  .findIndex(
+                                                                      (c) =>
+                                                                          selectedCard &&
+                                                                          c.card.id === selectedCard.card.id,
+                                                                  ) + 1
+                                                          ],
+                                                      )
+                                            }
+                                        >
+                                            <Box
+                                                width={60}
+                                                height={60}
+                                                borderRadius={'30px'}
+                                                display={'flex'}
+                                                justifyContent={'center'}
+                                                alignItems={'center'}
+                                                bgcolor={'white'}
+                                                border={'1px solid black'}
+                                            >
+                                                <NavigateNext />
+                                            </Box>
+                                        </ButtonBase>
+                                    )}
+                                </>
+                            </Modal>
                         </Box>
                         {/* NEXT */}
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>

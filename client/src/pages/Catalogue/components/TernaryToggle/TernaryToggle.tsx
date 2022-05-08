@@ -1,18 +1,18 @@
 import {
+    Box,
     Checkbox,
     CheckboxProps,
-    Chip,
-    ChipProps,
     FormControlLabel,
     FormControlLabelProps,
     IconButton,
     IconButtonProps,
 } from '@mui/material'
+import CategoryPill, { CategoryPillProps } from 'pages/Catalogue/components/CategoryPill/CategoryPill'
 import React, { DetailedHTMLProps, ImgHTMLAttributes } from 'react'
 import { isNegativeTB, isNotUnsetTB, isPositiveTB, TernaryBoolean } from 'utils/ternaryBoolean'
 
 export type TernaryToggleProps =
-    | { value: TernaryBoolean | undefined; type: 'chip'; chipProps: ChipProps }
+    | { value: TernaryBoolean | undefined; type: 'chip'; chipProps: CategoryPillProps }
     | {
           value: TernaryBoolean | undefined
           type: 'icon'
@@ -33,9 +33,31 @@ export type TernaryToggleProps =
 const TernaryToggle = (props: TernaryToggleProps): JSX.Element => {
     const { type } = props
     switch (type) {
-        case 'chip':
-            const { chipProps } = props
-            return <Chip {...chipProps} clickable />
+        case 'chip': {
+            const { chipProps, value } = props
+            const imgHeight = 52
+            const iconWidth = imgHeight / 4
+            const iconHeight = imgHeight / 4
+            return (
+                <Box position={'relative'}>
+                    <CategoryPill {...chipProps} />
+                    {isNotUnsetTB(value) && (
+                        <img
+                            style={{
+                                position: 'absolute',
+                                top: imgHeight && iconHeight ? (imgHeight - iconHeight) / 2 : 0,
+                                left: imgHeight && iconWidth ? (imgHeight - iconWidth) / 2 + 6 : 0,
+                                backgroundColor: isPositiveTB(value) ? '#00ff00' : '#ff0000',
+                                borderRadius: imgHeight ? imgHeight / 2 : undefined,
+                            }}
+                            width={iconWidth}
+                            height={iconHeight}
+                            src={`/img/general/${isPositiveTB(value) ? 'check' : 'cancel'}.svg`}
+                        />
+                    )}
+                </Box>
+            )
+        }
         case 'checkbox': {
             const { labelProps, checkboxProps, value } = props
             return (

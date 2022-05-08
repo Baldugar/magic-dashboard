@@ -9,12 +9,12 @@ enum CardType {
 }
 
 enum Color {
+  C
   W
   U
-  B
   R
+  B
   G
-  C
 }
 
 enum Layout {
@@ -144,39 +144,90 @@ type MTGACard {
   type_line: String!
 }
 
-type UserTag {
+type Tag {
   id: ID!
   type: String!
   extra: String!
   colors: [Color!]!
-  comment: String
   categoryType: CategoryType!
+}
+
+type UserTag {
+  tag: Tag!
+  rating: Int!
+  comment: String!
 }
 
 type MTGACard_User {
   card: MTGACard!
-  userRating: Int!
+  rating: Int!
+  comment: String!
   userCardTags: [UserTag!]!
   userDeckTags: [UserTag!]!
+}
+
+type User {
+  id: ID!
+  name: String!
 }
 
 input TagInput {
   name: String!
   extra: String!
   colors: [Color!]!
-  comment: String!
   categoryType: CategoryType!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+type GetTagsReturn {
+  cardTags: [Tag!]!
+  deckTags: [Tag!]!
+}
+
+input GetUserCardsParams {
+  userID: ID!
+}
+
+input TagLinkInput {
+  cardID: ID!
+  userID: ID!
+  tagID: ID!
+  categoryType: CategoryType!
+  rating: Int!
+  comment: String!
+}
+
+input RemoveTagLinkInput {
+  cardID: ID!
+  userID: ID!
+  tagID: ID!
+  categoryType: CategoryType!
+}
+
+input UpdateUserCardMetaInput {
+  userID: ID!
+  cardID: ID!
+  comment: String!
+  rating: Int!
 }
 
 type Query {
   getCards: [MTGACard!]!
-  # getUserCards(userID: ID!): [MTGACard_User!]!
-  # getUserTags(userID: ID!): [UserTag!]!
+  getUserCards(input: GetUserCardsParams!): [MTGACard_User!]!
+  getTags: GetTagsReturn!
 }
 
-# type Mutation {
-#   addTag(tag: TagInput!): UserTag!
-#   addUserCard(userID: ID!, cardID: ID!): MTGACard_User!
-#   updateUserCard(userID: ID!, cardID: ID!, userRating: Int!): MTGACard_User!
-#   updateUserTag(userID: ID!, tagID: ID!, comment: String): UserTag!
-# }
+type Mutation {
+  addTag(tag: TagInput!): Tag!
+  login(input: LoginInput!): User
+  addTagLink(input: TagLinkInput!): MTGACard_User!
+  updateUserCardMeta(input: UpdateUserCardMetaInput!): MTGACard_User!
+  updateTagLink(input: TagLinkInput!): MTGACard_User!
+  removeTagLink(input: RemoveTagLinkInput!): MTGACard_User!
+  #   addUserCard(userID: ID!, cardID: ID!): MTGACard_User!
+  #   updateUserCard(userID: ID!, cardID: ID!, userRating: Int!): MTGACard_User!
+}

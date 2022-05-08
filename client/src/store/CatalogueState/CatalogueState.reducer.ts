@@ -12,8 +12,13 @@ export interface CatalogueFilterType {
     cardTypes: Record<CardType, TernaryBoolean>
     multiColor: TernaryBoolean
     subtype: Record<CardType, Record<string, TernaryBoolean>>
-    categories: string[]
+    categories: Record<string, TernaryBoolean>
+    cardsWithoutCategory: TernaryBoolean
     expansions: Record<Set, TernaryBoolean>
+    rating: {
+        min: number | null
+        max: number | null
+    }
 }
 
 export enum SortEnum {
@@ -22,6 +27,7 @@ export enum SortEnum {
     RARITY = 'rarity',
     COLOR = 'color',
     TYPE = 'type',
+    RATING = 'rating',
 }
 
 export enum SortDirection {
@@ -88,7 +94,8 @@ export const initialCatalogueState: CatalogueState = {
             planeswalker: {},
             sorcery: {},
         },
-        categories: [],
+        categories: {},
+        cardsWithoutCategory: 0,
         expansions: (() => {
             const expansions = {} as Partial<Record<Set, TernaryBoolean>>
             Object.keys(Set).forEach((set: string) => {
@@ -96,10 +103,14 @@ export const initialCatalogueState: CatalogueState = {
             })
             return expansions as Record<Set, TernaryBoolean>
         })(),
+        rating: {
+            min: null,
+            max: null,
+        },
     },
     zoom: 'IN',
     sort: {
-        sortBy: SortEnum.NAME,
+        sortBy: SortEnum.CMC,
         sortDirection: SortDirection.ASC,
     },
 }

@@ -6,6 +6,27 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 // export const smallestMobile = 360
 
 const theme = createTheme({
+    components: {
+        MuiAccordion: {
+            defaultProps: {
+                disableGutters: true,
+                square: true,
+                TransitionProps: {
+                    unmountOnExit: true,
+                },
+            },
+            styleOverrides: {
+                root: {
+                    whiteSpace: 'pre-wrap',
+                },
+            },
+        },
+        MuiRating: {
+            defaultProps: {
+                max: 10,
+            },
+        },
+    },
     // palette: {
     //     primary: {
     //         main: colors.main,

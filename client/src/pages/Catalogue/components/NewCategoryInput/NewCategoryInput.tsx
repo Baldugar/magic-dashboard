@@ -8,30 +8,46 @@ import {
     ToggleButton,
     ToggleButtonGroup,
 } from '@mui/material'
-import { Color, UserTag } from 'graphql/types'
-import { useState } from 'react'
+import { CategoryType, Color, Tag } from 'graphql/types'
+import { sortBy, uniqBy } from 'lodash'
+import { useMemo, useState } from 'react'
 
 export interface NewCategoryInputProps {
-    cardCategories: UserTag[]
-    deckCategories: UserTag[]
-    onSubmit: (type: string, extra: string, comment: string, colors: Color[], categoryType: 'CARD' | 'DECK') => void
+    cardCategories: Tag[]
+    deckCategories: Tag[]
+    onSubmit: (type: string, extra: string, colors: Color[], categoryType: CategoryType) => void
 }
 
 export const NewCategoryInput = (props: NewCategoryInputProps) => {
     const { onSubmit, cardCategories, deckCategories } = props
+
     const [type, setType] = useState<{ type: string; inputValue?: string } | null>(null)
     const [extra, setExtra] = useState('')
-    const [comment, setComment] = useState('')
     const [colors, setColors] = useState<Color[]>([])
-    const [categoryType, setCategoryType] = useState<'CARD' | 'DECK'>('CARD')
+    const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.CARD)
 
-    const possibleCategoryNames: { type: string; inputValue?: string }[] =
-        categoryType === 'CARD'
-            ? cardCategories.map((c) => ({
-                  type: c.type,
-                  inputValue: undefined,
-              }))
-            : deckCategories.map((c) => ({ type: c.type, inputValue: undefined }))
+    const possibleCategoryNames: { type: string; inputValue?: string }[] = useMemo(
+        () =>
+            categoryType === CategoryType.CARD
+                ? sortBy(
+                      uniqBy(
+                          cardCategories.map((c) => ({
+                              type: c.type,
+                              inputValue: undefined,
+                          })),
+                          'type',
+                      ),
+                      'type',
+                  )
+                : sortBy(
+                      uniqBy(
+                          deckCategories.map((c) => ({ type: c.type, inputValue: undefined })),
+                          'type',
+                      ),
+                      'type',
+                  ),
+        [categoryType],
+    )
 
     const addColor = (color: Color) => {
         setColors([...colors, color])
@@ -41,13 +57,53 @@ export const NewCategoryInput = (props: NewCategoryInputProps) => {
         setColors(colors.filter((c) => c !== color))
     }
 
-    const handleCategoryType = (_: any, newCategoryType: 'CARD' | 'DECK' | null) => {
+    const handleCategoryType = (_: any, newCategoryType: CategoryType | null) => {
         if (newCategoryType) {
             setCategoryType(newCategoryType)
         }
     }
 
     const filter = createFilterOptions<{ type: string; inputValue?: string }>()
+
+    const tagAlreadyExists = (
+        type: { type: string; inputValue?: string } | null,
+        extra: string,
+        colors: Color[],
+        categoryType: CategoryType,
+    ): boolean => {
+        let exists = false
+        const typeToCheck = type ? type.type ?? type.inputValue ?? '' : ''
+        if (categoryType === CategoryType.CARD) {
+            exists = cardCategories.some((c) => {
+                const tagColors = colors
+                const cColors = c.colors
+                return (
+                    c.type === typeToCheck &&
+                    c.extra === extra &&
+                    cColors.length === tagColors.length &&
+                    cColors.every((c) => tagColors.includes(c))
+                )
+            })
+        }
+        if (categoryType === CategoryType.DECK) {
+            exists = deckCategories.some((c) => {
+                const tagColors = colors
+                const cColors = c.colors
+                console.log(
+                    tagColors,
+                    cColors,
+                    cColors.length === tagColors.length && cColors.every((c) => tagColors.includes(c)),
+                )
+                return (
+                    c.type === typeToCheck &&
+                    c.extra === extra &&
+                    cColors.length === tagColors.length &&
+                    cColors.every((c) => tagColors.includes(c))
+                )
+            })
+        }
+        return exists
+    }
 
     return (
         <Box display={'flex'} flexDirection={'column'} rowGap={1} padding={2}>
@@ -106,7 +162,7 @@ export const NewCategoryInput = (props: NewCategoryInputProps) => {
                         renderOption={(props, option) => <li {...props}>{option.type}</li>}
                         sx={{ width: 300 }}
                         freeSolo
-                        renderInput={(params) => <TextField {...params} label="Type" />}
+                        renderInput={(params) => <TextField {...params} label="Type" autoFocus />}
                     />
                 </Box>
                 <Box flex={4}>
@@ -137,17 +193,6 @@ export const NewCategoryInput = (props: NewCategoryInputProps) => {
                 ))}
             </Box>
             <Box>
-                <TextField
-                    label={'Comment'}
-                    fullWidth
-                    value={comment}
-                    multiline
-                    minRows={2}
-                    maxRows={10}
-                    onChange={(e) => setComment(e.target.value)}
-                />
-            </Box>
-            <Box>
                 <ToggleButtonGroup
                     value={categoryType}
                     exclusive
@@ -165,10 +210,12 @@ export const NewCategoryInput = (props: NewCategoryInputProps) => {
             <Box display={'flex'} columnGap={1}>
                 <Box>
                     <Button
-                        disabled={type === null || colors.length === 0}
+                        disabled={
+                            type === null || colors.length === 0 || tagAlreadyExists(type, extra, colors, categoryType)
+                        }
                         variant={'contained'}
                         onClick={() => {
-                            onSubmit(type?.inputValue ?? type?.type ?? '', extra, comment, colors, 'CARD')
+                            onSubmit(type?.inputValue ?? type?.type ?? '', extra, colors, categoryType)
                         }}
                     >
                         Submit
@@ -181,7 +228,6 @@ export const NewCategoryInput = (props: NewCategoryInputProps) => {
                         onClick={() => {
                             setType(null)
                             setExtra('')
-                            setComment('')
                             setColors([])
                         }}
                     >
